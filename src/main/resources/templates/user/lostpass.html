@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html class="h-100" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="script">
+<script th:inline="javascript">
+    $(document).ready(function(){
+        //id="emailsearch"
+        $("#emailsearch").on("click", function(){
+            $.ajax({
+                url:'/user/emailsearch',
+                type:'get',
+                data:{mc_name: $("#mc_name").val(), mc_phone: $("#mc_phone").val()},
+                dataType: 'text',
+                success: function(result){
+                    alert(result);
+                    if(result != "fail"){
+                        $("#result").html(result);
+                    }else if(result == "fail"){
+                        alert("입력한정보를 확인 바랍니다");
+                    }
+                    $("#mc_name").val("");
+                    $("#mc_phone").val("");
+                }
+            });
+        });
+    });
+
+
+</script>
+
+</th:block>
+<th:block layout:fragment="content">
+    <div class="row mt-5">
+		<div class="col-6">
+			<h5>이메일 찾기</h5>
+			<div class="mb-3">
+				<label for="mc_name" class="form-label">이름</label>
+				<input type="text" class="form-control" id="mc_name" name="mc_name" placeholder="이름을 입력">
+			</div>
+			<div class="mb-3">
+				<label for="mc_phone" class="form-label">핸드폰</label>
+				<input type="text" class="form-control" id="mc_phone" name="mc_phone" placeholder="번호를 입력">
+			</div>
+			<div class="mb-3 text-center">
+				<button type="button" class="btn btn-primary" id="emailsearch">이메일찾기</button>
+                <p id="result"></p>
+			</div>
+		</div>
+		<div class="col-6">
+			<h5>비밀번호 찾기</h5>
+			<div class="mb-3">
+				<label for="mc_email" class="form-label">비밀번호</label>
+				<input type="text" class="form-control" id="mc_email" name="mc_email" placeholder="이메일을 입력">
+			</div>
+			<div class="mb-3">
+				<label for="u_email2" class="form-label">비밀번호재설정</label>
+				<input type="text" class="form-control" id="u_email2" name="u_email2" placeholder="비밀번호를 입력">
+			</div>
+			<div class="mb-3 text-center">
+				<button type="button" class="btn btn-primary" id="pwreset">임시 비밀번호 발급</button>
+			</div>
+		</div>
+	</div>
+</th:block>
+
+
+
+</html>

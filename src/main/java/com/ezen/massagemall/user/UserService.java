@@ -12,7 +12,6 @@ public class UserService {
 
 	public void join(UserVO vo) {
 		userMapper.join(vo);
-
 	}
 
 	public String emailcheck(String mc_email) {
@@ -25,5 +24,17 @@ public class UserService {
 
 	public UserVO modify(String mc_email) {
 		return userMapper.modify(mc_email);
+	}
+
+	public void modify_save(UserVO vo) {
+		userMapper.modify_save(vo);
+	}
+
+	public void pwchange(String mc_email, String mc_password) {
+		userMapper.pwchange(mc_email, mc_password);
+	}
+
+	public String emailsearch(String mc_name, String mc_phone) {
+		return userMapper.emailsearch(mc_name, mc_phone);
 	}
 }

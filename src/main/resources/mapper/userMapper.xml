@@ -16,11 +16,47 @@
 </select>
 <select id="login" resultType="com.ezen.massagemall.user.UserVO">
 	select
-		mc_email, mc_password, mc_name
+		mc_email, mc_password, mc_name, mc_regdate
 	from
 		mc_tbl
 	where
 		mc_email=#{mc_email}
+</select>
+<select id="modify" resultType="com.ezen.massagemall.user.UserVO">
+	select
+		mc_email, mc_regdate, mc_updatedate , mc_name,
+		mc_zipcode, mc_addr, mc_deaddr, mc_phone
+	from
+		mc_tbl
+	where
+		mc_email=#{mc_email}
+</select>
+<update id="modify_save">
+	update
+		mc_tbl
+	set
+		mc_email=#{mc_email}, mc_updatedate=now(), mc_name=#{mc_name},
+		mc_zipcode=#{mc_zipcode}, mc_addr=#{mc_addr}, mc_deaddr=#{mc_deaddr}, mc_phone=#{mc_phone}
+	where
+		mc_email=#{mc_email}
+</update>
+<update id="pwchange" parameterType="Map">
+	update
+		mc_tbl
+	set
+		mc_password=#{mc_password}
+	where
+		mc_email=#{mc_email}
+</update>
+<select id="emailsearch" resultType="String">
+	select
+		mc_email
+	from
+		mc_tbl
+	where
+		mc_name=#{mc_name}
+	and
+		mc_phone=#{mc_phone}
 </select>
 
 </mapper>

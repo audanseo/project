@@ -20,4 +20,5 @@ public class UserVO {
 	private String mc_deaddr;
 	private Date mc_regdate;
 	private Date mc_lastlogin;
+	private Date mc_updatedate;
 }
