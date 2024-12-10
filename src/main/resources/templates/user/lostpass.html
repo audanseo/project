@@ -5,15 +5,23 @@
     $(document).ready(function(){
         //id="emailsearch"
         $("#emailsearch").on("click", function(){
+
+			if($("#mc_name").val() == ""){
+				alert("이름을 입력하세요")
+                return;
+			}else if($("#mc_phone").val() == ""){
+				alert("전화번호를 입력하세요")
+                return;
+			}
             $.ajax({
                 url:'/user/emailsearch',
                 type:'get',
                 data:{mc_name: $("#mc_name").val(), mc_phone: $("#mc_phone").val()},
                 dataType: 'text',
                 success: function(result){
-                    alert(result);
                     if(result != "fail"){
                         $("#result").html(result);
+						alert(result);
                     }else if(result == "fail"){
                         alert("입력한정보를 확인 바랍니다");
                     }
@@ -22,6 +30,34 @@
                 }
             });
         });
+		//id="passwordsearch"
+		$("#passwordsearch").on("click", function(){
+			
+			if($("#mc_email").val() == "") {
+				alert("다시 확인해주세요")
+				return;
+			}else if($("#mc_name2").val() == ""){
+				alert("이름을 입력하세요")
+				return;
+			}
+			
+			$.ajax({
+				url:'/user/passwordsearch',
+				type:'get',
+				data:{mc_email: $("#mc_email").val(), mc_name: $("#mc_name2").val()},
+				dataType: 'text',
+				success: function(result){
+					if(result != "fail") {
+						$("#result").html(result);
+						alert(result);
+					}else if(result == "fail") {
+						alert("입력한정보를 확인 바랍니다");
+					}
+					$("#mc_email").val("");
+					$("#mc_name2").val("");
+				}
+			});
+		});
     });
 
 
@@ -42,21 +78,20 @@
 			</div>
 			<div class="mb-3 text-center">
 				<button type="button" class="btn btn-primary" id="emailsearch">이메일찾기</button>
-                <p id="result"></p>
 			</div>
 		</div>
 		<div class="col-6">
 			<h5>비밀번호 찾기</h5>
 			<div class="mb-3">
-				<label for="mc_email" class="form-label">비밀번호</label>
+				<label for="mc_email" class="form-label">이메일</label>
 				<input type="text" class="form-control" id="mc_email" name="mc_email" placeholder="이메일을 입력">
 			</div>
 			<div class="mb-3">
-				<label for="u_email2" class="form-label">비밀번호재설정</label>
-				<input type="text" class="form-control" id="u_email2" name="u_email2" placeholder="비밀번호를 입력">
+				<label for="mc_name2" class="form-label">이름</label>
+				<input type="text" class="form-control" id="mc_name2" name="mc_name2" placeholder="이름을 입력">
 			</div>
 			<div class="mb-3 text-center">
-				<button type="button" class="btn btn-primary" id="pwreset">임시 비밀번호 발급</button>
+				<button type="button" class="btn btn-primary" id="passwordsearch">비밀번호 찾기</button>
 			</div>
 		</div>
 	</div>

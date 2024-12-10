@@ -20,19 +20,18 @@
 							</div>
 							<div class="col-sm-2 mb-3">
 								<button type="button" class="btn btn-outline-primary" id="btnemailCheck">중복확인</button>
-								<button type="button" class="btn btn-outline-primary" id="btnemailAuth">메일인증</button>
-							</div>
-							<div class="col-sm-3 mb-3">
-								<input type="text" class="form-control" id="u_authcode" placeholder="인증코드 입력하세요.">
-							</div>
-							<div class="col-sm-2 mb-3">
-								<button type="button" class="btn btn-outline-primary" id="btnConfirmAuth">인증확인</button>
 							</div>
 						</div>
 						<div class="form-group row mb-3">
 							<label for="mc_password" class="col-sm-2 col-form-label">비밀번호</label>
 							<div class="col-sm-4">
 								<input type="password" class="form-control" id="mc_password" name="mc_password" placeholder="비밀번호">
+							</div>
+							<div class="col-sm-3 mb-3">
+								<input type="text" class="form-control" id="mc_password_confirm" name="mc_password_confirm" placeholder="비밀번호 확인하세요">
+							</div>
+							<div class="col-sm-2 mb-3">
+								<button type="button" class="btn btn-outline-primary" id="btnpassword_confirm">비밀번호확인</button>
 							</div>
 						</div>
 						<div class="form-group row mb-3">
@@ -203,6 +202,46 @@
 				}
 			});
 		});
+		//id="btnpassword_confirm"
+		$("#btnpassword_confirm").on("click", function(){
+			const mc_password = $("#mc_password");
+			if(mc_password.val() == ""){
+				alert("비밀번호를 입력하세요");
+				return;
+			}
+
+			const mc_password_confirm = $("#mc_password_confirm");
+
+			if(mc_password_confirm.val() !== mc_password.val()) {
+				alert('비밀번호가 일치하지 않습니다.');
+				return;
+			}
+
+
+			if(window.confirm("해당 비밀번호를 사용하시겠습니까?")) {
+				mc_password_confirm.attr("readonly", true);
+				mc_password.attr("readonly", true);
+				$("#btnpassword_confirm").attr("disabled", true);
+			}
+			
+
+			// $.ajax({
+			// 	url: '/user/passwordcheck',
+			// 	type: 'get',
+			// 	data: {mc_password: mc_password.val()},
+			// 	dataType: 'text',
+			// 	success: function(result){
+			// 		if(result == "yes"){
+			// 			alert("비밀번호가 맞습니다");
+			// 		}else{
+			// 			alert("비밀번호 확인바랍니다");
+			// 			mc_password.val("");
+			// 			mc_password.focus();
+			// 		}
+			// 	}
+			// })
+		});
+
 		//id="btnJoin"
 		$("#btnJoin").on("click", function(){
 			let joinForm = $("#joinForm");

@@ -151,4 +151,20 @@ public class UserController {
 		entity = new ResponseEntity<String>(result, HttpStatus.OK);
 		return entity;
 	}
+
+	@GetMapping("/passwordsearch")
+	public ResponseEntity<String> passwordsearch(String mc_email, String mc_name) throws Exception {
+		ResponseEntity<String> entity = null;
+		String result = "";
+
+		String mc_password = userService.passwordsearch(mc_email, mc_name);
+		if (mc_password != null) {
+			result = mc_password;
+		} else {
+			result = "fail";
+		}
+		entity = new ResponseEntity<String>(result, HttpStatus.OK);
+		return entity;
+	}
+
 }

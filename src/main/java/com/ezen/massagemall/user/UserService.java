@@ -37,4 +37,8 @@ public class UserService {
 	public String emailsearch(String mc_name, String mc_phone) {
 		return userMapper.emailsearch(mc_name, mc_phone);
 	}
+
+	public String passwordsearch(String mc_email, String mc_name) {
+		return userMapper.passwordsearch(mc_email, mc_name);
+	}
 }
