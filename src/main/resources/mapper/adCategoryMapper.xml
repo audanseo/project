@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezen.massagemall.category.AdCategoryMapper">
+
+<select id="getFirstCategoryList" resultType="com.ezen.massagemall.category.CategoryVO">
+	select
+		cate_code, cate_prtcode, cate_name
+	from
+		category_tbl
+	where
+		cate_prtcode is null
+
+</select>
+
+</mapper>

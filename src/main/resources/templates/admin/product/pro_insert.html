@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{admin/layouts/ad_layout}">
+<th:block layout:fragment="script">
+	<script src="/ckeditor/ckeditor.js"></script>
+
+</th:block>
+
+
+<th:block layout:fragment="content">
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col">
+				<div class="card card-primary">
+					<div class="card-header">
+						<h3 class="card-title">상품 등록</h3>
+					</div>
+					<!-- /.card-header -->
+					<!-- form start -->
+					<form>
+						<div class="card-body">
+							<div class="form-group">
+								<label>1차카테고리</label> <select class="custom-select" name="cate_prtcode" id="btn_firstCategory">
+									<option>1차카테고리 선택</option>
+									<option th:each="category : ${cate_list}" th:value="${category.cate_code}" th:text="${category.cate_name}">option 2</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="pro_name">상품명</label> <input type="text" class="form-control" id="pro_name" name="pro_name" placeholder="상품명 입력">
+							</div>
+							<div class="form-group">
+								<label for="pro_price">가격</label> <input type="text" class="form-control" id="pro_price" name="pro_price" placeholder="가격 입력">
+							</div>
+							<div class="form-group">
+								<label for="pro_discount">할인율</label> <input type="text" class="form-control" id="pro_discount" name="pro_discount" placeholder="할인율 입력">
+							</div>
+							<div class="form-group">
+								<label for="pro_content">상품설명</label>
+								<textarea class="form-control" id="pro_content" name="pro_content" placeholder="상품설명 입력"></textarea>
+							</div>
+
+							<div class="form-group">
+								<label for="pro_img">상품이미지</label>
+								<div class="input-group">
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="pro_img" name="pro_img"> <label class="custom-file-label" for="exampleInputFile">상품이미지파일 선택</label>
+									</div>
+									<div class="input-group-append">
+										<span class="input-group-text">상품이미지</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="pro_amount">수량</label> <input type="number" class="form-control" id="pro_amount" name="pro_amount" placeholder="수량 입력">
+							</div>
+							<div class="form-group">
+								<label for="exampleInputPassword1">판매여부</label>
+								<div class="custom-control custom-radio">
+									<input class="custom-control-input" type="radio" id="pro_buy" name="pro_buy"> <label for="customRadio1" class="custom-control-label mr-5">판매함</label> <input class="custom-control-input" type="radio" id="pro_buy1" name="pro_buy"> <label for="customRadio1" class="custom-control-label">판매안함</label>
+								</div>
+							</div>
+						</div>
+						<!-- /.card-body -->
+
+						<div class="card-footer">
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		// ckeditor 설정
+		var ckeditor_config = {
+			resize_enabled : false,
+			enterMode : CKEDITOR.ENTER_BR,
+			shiftEnterMode : CKEDITOR.ENTER_P,
+			toolbarCanCollapse : true,
+			removePlugins : "elementspath",
+			//업로드 탭기능추가 속성. CKEditor에서 파일업로드해서 서버로 전송클릭하면 , 이 주소가 동작된다.
+			filebrowserUploadUrl : '/imageupload'
+		}
+	
+		// id="content" 인 textarea태그에 ckeditor_config변수가 가지고 있는 설정정보를 적용하겠다.
+		CKEDITOR.replace("pro_content", ckeditor_config);
+	</script>
+
+</th:block>
+
+</html>
