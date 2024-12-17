@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ezen.massagemall.mail.EmailDTO;
+import com.ezen.massagemall.mail.EmailService;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class UserController {
 
+	private final EmailService emailService;
 	private final UserService userService;
-
 	private final PasswordEncoder passwordEncoder;
 
 	@GetMapping("/join")
@@ -51,6 +54,22 @@ public class UserController {
 		}
 		entity = new ResponseEntity<String>(isUse, HttpStatus.OK);
 		return entity;
+	}
+
+	// 닉네임 (별명체크)
+	@GetMapping("/nicknamecheck")
+	public ResponseEntity<String> nicknamecheck(String mc_nickname) throws Exception {
+		ResponseEntity<String> entity = null;
+
+		String isUse = "";
+		if (userService.emailcheck(mc_nickname) != null) {
+			isUse = "no";
+		} else {
+			isUse = "yes";
+		}
+		entity = new ResponseEntity<String>(isUse, HttpStatus.OK);
+		return entity;
+
 	}
 
 	// 로그인
@@ -152,14 +171,41 @@ public class UserController {
 		return entity;
 	}
 
-	@GetMapping("/passwordsearch")
+	// 암호화가 단방향이다보니 찾아서 로그인을 하려는데 로그인을 할 수가 없음
+//	@GetMapping("/passwordsearch") 
+//	public ResponseEntity<String> passwordsearch(String mc_email, String mc_name) throws Exception {
+//		ResponseEntity<String> entity = null;
+//		String result = "";
+//
+//		String mc_password = userService.passwordsearch(mc_email, mc_name);
+//		if (mc_password != null) {
+//			result = mc_password;
+//		} else {
+//			result = "fail";
+//		}
+//		entity = new ResponseEntity<String>(result, HttpStatus.OK);
+//		return entity;
+//	}
+
+	// 임시비밀번호 -메일발송
+	@GetMapping("passwordsearch")
 	public ResponseEntity<String> passwordsearch(String mc_email, String mc_name) throws Exception {
 		ResponseEntity<String> entity = null;
 		String result = "";
 
-		String mc_password = userService.passwordsearch(mc_email, mc_name);
-		if (mc_password != null) {
-			result = mc_password;
+		String d_u_email = userService.passwordsearch(mc_email, mc_name);
+
+		if (d_u_email != null) {
+			result = "success";
+
+			String imsi_pw = emailService.createAuthCode();
+			userService.pwchange(mc_email, passwordEncoder.encode(imsi_pw));
+
+			String type = "mail/passwordsearch";
+			EmailDTO dto = new EmailDTO();
+			dto.setReceiverMail(d_u_email);
+			dto.setSubject("Massage Mall 임시비밀번호를 보냅니다.");
+			emailService.sendMail(type, dto, imsi_pw);
 		} else {
 			result = "fail";
 		}

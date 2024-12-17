@@ -14,6 +14,7 @@ public class UserVO {
 	private String mc_email;
 	private String mc_password;
 	private String mc_name;
+	private String mc_nickname;
 	private String mc_phone;
 	private String mc_zipcode;
 	private String mc_addr;

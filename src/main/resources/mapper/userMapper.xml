@@ -14,10 +14,20 @@
 	where
 		mc_email=#{mc_email}
 </select>
+<select id="nicknamecheck" resultType="String">
+	select
+		mc_nickname
+	from
+		mc_tbl
+	where
+		mc_nickname=#{mc_nickname}
+</select>
+
+
 
 <select id="login" resultType="com.ezen.massagemall.user.UserVO">
 	select
-		mc_email, mc_password, mc_name, mc_regdate
+		mc_email, mc_password, mc_name, mc_regdate, mc_nickname
 	from
 		mc_tbl
 	where
@@ -26,7 +36,7 @@
 <select id="modify" resultType="com.ezen.massagemall.user.UserVO">
 	select
 		mc_email, mc_regdate, mc_updatedate , mc_name,
-		mc_zipcode, mc_addr, mc_deaddr, mc_phone
+		mc_zipcode, mc_addr, mc_deaddr, mc_phone, mc_nickname
 	from
 		mc_tbl
 	where
@@ -36,7 +46,7 @@
 	update
 		mc_tbl
 	set
-		mc_email=#{mc_email}, mc_updatedate=now(), mc_name=#{mc_name},
+		mc_email=#{mc_email}, mc_updatedate=now(), mc_name=#{mc_name}, mc_nickname=#{mc_nickname},
 		mc_zipcode=#{mc_zipcode}, mc_addr=#{mc_addr}, mc_deaddr=#{mc_deaddr}, mc_phone=#{mc_phone}
 	where
 		mc_email=#{mc_email}
@@ -61,7 +71,7 @@
 </select>
 <select id="passwordsearch" resultType="String">
 	select
-		mc_password
+		mc_email
 	from
 		mc_tbl
 	where

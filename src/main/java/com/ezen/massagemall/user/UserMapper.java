@@ -8,6 +8,8 @@ public interface UserMapper {
 
 	String emailcheck(String mc_email);
 
+	String nicknamecheck(String mc_nickname);
+
 	UserVO login(String mc_email);
 
 	UserVO modify(String mc_email);

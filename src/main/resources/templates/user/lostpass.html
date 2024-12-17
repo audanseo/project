@@ -30,6 +30,7 @@
                 }
             });
         });
+		// 3주차 메일인증으로 비밀번호 찾기로 변경
 		//id="passwordsearch"
 		$("#passwordsearch").on("click", function(){
 			
@@ -47,14 +48,14 @@
 				data:{mc_email: $("#mc_email").val(), mc_name: $("#mc_name2").val()},
 				dataType: 'text',
 				success: function(result){
-					if(result != "fail") {
-						$("#result").html(result);
-						alert(result);
+					if(result == "success") {
+						alert("임시비밀번호를 메일로 발송했습니다")
+						location.href = "/user/login"
 					}else if(result == "fail") {
 						alert("입력한정보를 확인 바랍니다");
+						$("#mc_email").val("");
+						$("#mc_name2").val("");
 					}
-					$("#mc_email").val("");
-					$("#mc_name2").val("");
 				}
 			});
 		});

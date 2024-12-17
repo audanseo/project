@@ -15,10 +15,10 @@
 					<div class="card-body">
 						<div class="form-group row mb-3">
 							<label for="mc_email" class="col-sm-2 col-form-label">이메일</label>
-							<div class="col-sm-3">
+							<div class="col-sm-4">
 								<input type="text" class="form-control" id="mc_email" name="mc_email" placeholder="example@naver.com">
 							</div>
-							<div class="col-sm-2 mb-3">
+							<div class="col-sm-2 mb-3" style="width: 120px;">
 								<button type="button" class="btn btn-outline-primary" id="btnemailCheck">중복확인</button>
 							</div>
 						</div>
@@ -36,11 +36,19 @@
 						</div>
 						<div class="form-group row mb-3">
 							<label for="mc_name" class="col-sm-2 col-form-label">이름</label>
-							<div class="col-sm-10">
+							<div class="col-sm-4">
 								<input type="text" class="form-control" id="mc_name" name="mc_name" placeholder="이름">
 							</div>
 						</div>
-
+						<div class="form-group row mb-3">
+							<label for="mc_nickname" class="col-sm-2 col-form-label">별명</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" id="mc_nickname" name="mc_nickname" placeholder="별명">
+							</div>
+							<div class="col-sm-2 mb-3" style="width: 120px;">
+								<button type="button" class="btn btn-outline-primary" id="btnnicknameCheck">중복확인</button>
+							</div>
+						</div>
 						<div class="form-group row mb-3">
 							<label for="mc_zipcode" class="col-sm-2 col-form-label">우편번호</label>
 							<div class="col-sm-4">
@@ -52,19 +60,19 @@
 						</div>
 						<div class="form-group row mb-3">
 							<label for="mc_addr" class="col-sm-2 col-form-label">기본주소</label>
-							<div class="col-sm-10">
+							<div class="col-sm-6">
 								<input type="text" class="form-control" id="sample2_address" name="mc_addr" placeholder="기본주소">
 							</div>
 						</div>
 						<div class="form-group row mb-3">
 							<label for="mc_deaddr" class="col-sm-2 col-form-label">상세주소</label>
-							<div class="col-sm-10">
+							<div class="col-sm-4">
 								<input type="text" class="form-control" id="sample2_detailAddress" name="mc_deaddr" placeholder="상세주소"> <input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
 							</div>
 						</div>
 						<div class="form-group row mb-3">
 							<label for="mc_phone" class="col-sm-2 col-form-label">핸드폰</label>
-							<div class="col-sm-10">
+							<div class="col-sm-4">
 								<input type="text" class="form-control" id="mc_phone" name="mc_phone" placeholder="010-1234-1234">
 							</div>
 						</div>
@@ -173,6 +181,8 @@
     }
     </script>
 	<script>
+
+		// 3주차 닉네임 체크도 추가
 	$(document).ready(function(){
 		let email_check = false;
 		//id="btnemailCheck"
@@ -182,9 +192,6 @@
 				alert("이메일을 입력하세요");
 				return;
 			}
-
-
-
 			$.ajax({
 				url: '/user/emailcheck',
 				type: 'get',
@@ -192,10 +199,10 @@
 				dataType: 'text',
 				success: function(result){
 					if(result == "yes"){
-						alert("이메일사용가능")
+						alert("이메일 사용가능");
 						email_check = true;
 					}else{
-						alert("이메일사용불가능")
+						alert("이메일 사용중입니다");
 						mc_email.val("");
 						mc_email.focus();
 					}
@@ -241,6 +248,33 @@
 			// 	}
 			// })
 		});
+		//id="btnnicknameCheck"
+		let nickname_check= false;
+		$("#btnnicknameCheck").on("click", function(){
+			let mc_nickname = $("#mc_nickname");
+			if(mc_nickname.val() == "") {
+				alert("별명은 입력하세요");
+				return;
+			}
+			$.ajax({
+				url: '/user/nicknamecheck',
+				type: 'get',
+				data: {mc_nickname: mc_nickname.val()},
+				dataType: 'text',
+				success: function(result){
+					if(result == "yes"){
+						alert("별명 사용가능");
+						nickname_check = true;
+					}else{
+						alert("별명 사용불가능");
+						mc_nickname.val("");
+						mc_nickname.focus();
+					}
+				}
+			});
+		});
+
+
 
 		//id="btnJoin"
 		$("#btnJoin").on("click", function(){
@@ -251,6 +285,8 @@
 			}
 			joinForm.submit();
 		});
+
+
 	});
 	
 	</script>

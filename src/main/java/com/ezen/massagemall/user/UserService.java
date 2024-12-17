@@ -18,6 +18,10 @@ public class UserService {
 		return userMapper.emailcheck(mc_email);
 	}
 
+	public String nicknamecheck(String mc_nickname) {
+		return userMapper.nicknamecheck(mc_nickname);
+	}
+
 	public UserVO login(String mc_email) {
 		return userMapper.login(mc_email);
 	}

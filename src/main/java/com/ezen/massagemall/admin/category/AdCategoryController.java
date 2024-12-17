@@ -1,4 +1,4 @@
-package com.ezen.massagemall.category;
+package com.ezen.massagemall.admin.category;
 
 import org.springframework.stereotype.Controller;
 

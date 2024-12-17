@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{admin/layouts/ad_layout}">
+
+<th:block layout:fragment="content">
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">상품 목록</h3>
+					</div>
+					<!-- /.card-header -->
+					<div class="card-body">
+					<form>
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th style="width: 5%">
+										<input type="checkbox" id="selectAll">
+									</th>
+									<th style="width: 5%">상품코드</th>
+									<th style="width: 40%">상품정보</th>
+									<th style="width: 10%">판매가</th>
+									<th style="width: 10%">수량</th>
+									<th style="width: 10%">등록일</th>
+									<th style="width: 10%">관리</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each= "productVO:${pro_list}">
+									<td><input type="checkbox" name="check" th:value="${productVO.pro_num}"></td>
+									<td>[[${productVO.pro_num}]]</td>
+									<td>
+										[[${productVO.pro_name}]] <br>
+										<img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+									</td>
+									<td>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</td>
+									<td>[[${productVO.pro_discount}]]</td>
+									<td>[[${#dates.format(productVO.pro_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
+									<td></td>
+								</tr>									
+							</tbody>
+						</table>
+					</form>
+					</div>
+					<!-- /.card-body -->
+					<div class="card-footer clearfix">
+						<ul class="pagination pagination-sm m-0 float-right">
+							<li class="page-item"><a class="page-link" href="#">«</a></li>
+							<li class="page-item"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item"><a class="page-link" href="#">»</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block>
+</html>
