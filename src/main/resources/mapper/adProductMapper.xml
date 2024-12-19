@@ -17,7 +17,52 @@
 		pro_img, pro_amount, pro_buy, pro_date, pro_updatedate
 	from
 		product_tbl
-	where pro_num > 0
+	where 
+		pro_num > 0
+	
+	<include refid="search"></include>
+
+	limit #{pageStart}, #{perPageNum}
+
 </select>
+
+<select id="getTotalCount" resultType="int">
+	select
+		count(*)
+	from
+		product_tbl
+	where
+		pro_num >0
+	<include refid="search"></include>
+		
+</select>
+
+<select id="getSecondCategoryList" resultType="com.ezen.massagemall.admin.category.CategoryVO">
+	select
+		cate_code, cate_prtcode, cate_name
+	from
+		category_tbl
+	where
+		cate_prtcode=#{cate_prtcode}
+</select>
+
+
+<sql id="search">
+	<if test="searchType !=null">
+	<if test="searchType == 'u'.toString()">
+		and pro_num like concat('%', #{keyword}, '%')
+	</if>
+	<if test="searchType == 'n'.toString()">
+		and pro_name like concat('%', #{keyword}, '%')
+	</if>
+	<if test="searchType == 'un'.toString()">
+		and pro_name like concat('%', #{keyword}, '%')
+		or
+		pro_num like concat('%', #{keyword}, '%')
+	</if>
+	</if>
+</sql>
+
+
 
 </mapper>

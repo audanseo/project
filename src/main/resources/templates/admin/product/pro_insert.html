@@ -14,11 +14,28 @@
 					$("#img_preview").attr("src", e.target.result);
 				}
 			});
+			//id="btn_firstCategory"
+			$("#btn_firstCategory").on("change", function(){
+				let firstCategoryCode = $("#btn_firstCategory").val();
+				//2차 카테고리목록 가져오기
+				let url = "/admin/product/secondcategory/" + firstCategoryCode;
+				
+				$.getJSON(url, function(secondCategoryList) {
+					let secondCategoryCode = $("#btn_secondCategory");
+					let optionStr = "";
+
+					for(let i=0; i<secondCategoryList.length; i++) {
+						optionStr += `<option value='${secondCategoryList[i].cate_code}'>${secondCategoryList[i].cate_name}</option>`; 
+					}
+
+					secondCategoryCode.find("option").remove();
+					secondCategoryCode.append("<option>2차카테고리 선택</option>");
+					secondCategoryCode.append(optionStr);
+				});
+			});
 		});
 	</script>
 </th:block>
-
-
 <th:block layout:fragment="content">
 	<div class="container mt-5">
 		<div class="row">
@@ -35,6 +52,11 @@
 								<label>1차카테고리</label> <select class="custom-select" name="cate_prtcode" id="btn_firstCategory">
 									<option>1차카테고리 선택</option>
 									<option th:each="category : ${cate_list}" th:value="${category.cate_code}" th:text="${category.cate_name}">option 2</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>2차카테고리</label> <select class="custom-select" name="cate_code" id="btn_secondCategory">
+									<option>2차카테고리 선택</option>
 								</select>
 							</div>
 							<div class="form-group">
@@ -55,9 +77,6 @@
 								<div class="input-group">
 									<div class="custom-file">
 										<input type="file" class="custom-file-input" id="pro_img_upload" name="pro_img_upload"> <label class="custom-file-label" for="exampleInputFile">상품이미지파일 선택</label>
-									</div>
-									<div class="input-group-append">
-										<span class="input-group-text">상품이미지</span>
 									</div>
 								</div>
 								<div class="form-group">

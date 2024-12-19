@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ezen.massagemall.admin.category.AdCategoryService;
+import com.ezen.massagemall.admin.category.CategoryVO;
 import com.ezen.massagemall.admin.utils.FileUtils;
+import com.ezen.massagemall.admin.utils.PageMaker;
+import com.ezen.massagemall.admin.utils.SearchCriteria;
+import com.ezen.massagemall.constants.Constants;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -95,10 +100,9 @@ public class AdProductController {
 			ex.printStackTrace();
 		} finally {
 			if (out != null) {
-
 				try {
-
 					out.close();// 객체소멸은 객체생성의 역순으로 close작업을 해준다
+
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -115,6 +119,7 @@ public class AdProductController {
 
 		try {
 			entity = fileUtils.getFile(uploadCKPath, fileName);
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -123,10 +128,44 @@ public class AdProductController {
 	}
 
 	@GetMapping("/pro_list")
-	public void pro_list(Model model) throws Exception {
+	public void pro_list(SearchCriteria cri, Model model) throws Exception {
+		// cri 기억장소에 page, perPageNum, searchType, keyword가 존재
 
-		List<ProductVO> pro_list = adProductService.pro_list();
+		cri.setPerPageNum(Constants.ADMIN_PRODUCT_LIST_COUNT);
+
+		List<ProductVO> pro_list = adProductService.pro_list(cri);
+
+		// pro_list이미지의 \\는 윈도우에서 보여지지 않으므로 /변환작업을 해줘야한다
+		pro_list.forEach(vo -> {
+			vo.setPro_upfolder(vo.getPro_upfolder().replace("\\", "/"));
+		});
 		model.addAttribute("pro_list", pro_list);
+
+		PageMaker pageMaker = new PageMaker();
+
+		pageMaker.setDisplayPageNum(Constants.ADMIN_PRODUCT_LIST_PAGESIZE);
+
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(adProductService.getTotalCount(cri));
+		model.addAttribute("pageMaker", pageMaker);
+		model.addAttribute("cate_list", adCategoryService.getFirstCategoryList());
+	}
+
+	// 2차카테고리
+
+	@GetMapping("/secondcategory/{cate_prtcode}")
+	public ResponseEntity<List<CategoryVO>> getSecondCategoryList(@PathVariable("cate_prtcode") Integer cate_prtcode) {
+		ResponseEntity<List<CategoryVO>> entity = null;
+		entity = new ResponseEntity<List<CategoryVO>>(adProductService.getSecondCategoryList(cate_prtcode),
+				HttpStatus.OK);
+		return entity;
+	}
+
+	// 이미지 파일을 보낼때는 바이트로 해줘야한다
+	@GetMapping("/image_display")
+	public ResponseEntity<byte[]> image_display(String dateFolderName, String fileName) throws Exception {
+
+		return fileUtils.getFile(uploadPath + "\\" + dateFolderName, fileName);
 	}
 
 }

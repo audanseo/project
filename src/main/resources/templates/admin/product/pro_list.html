@@ -11,15 +11,39 @@
 					</div>
 					<!-- /.card-header -->
 					<div class="card-body">
-					<form>
+						<div class="row">
+							<div class="col-8">
+								<form>
+									<div class="form-group row">
+										<div class="col-2">
+											<select name="searchType" class="form-control">
+												<option selected>검색종류 선택</option>
+												<option value="u">상품코드</option>
+												<option value="n">상품정보</option>
+												<option value="un">상품코드or상품정보</option>
+											</select>
+										</div>
+										<div class="col-4">
+											<input type="text" name="keyword" class="form-control" placeholder="Enter ...">
+										</div>
+										<div class="col-2">
+											<button type="submit" class="btn btn-block btn-outline-primary">찾기</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					<div class="row">
+						<div class="col">
+						<form>
 						<table class="table table-bordered">
 							<thead>
 								<tr>
 									<th style="width: 5%">
 										<input type="checkbox" id="selectAll">
 									</th>
-									<th style="width: 5%">상품코드</th>
-									<th style="width: 40%">상품정보</th>
+									<th style="width: 10%">상품코드</th>
+									<th style="width: 30%">상품정보</th>
 									<th style="width: 10%">판매가</th>
 									<th style="width: 10%">수량</th>
 									<th style="width: 10%">등록일</th>
@@ -35,7 +59,7 @@
 										<img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
 									</td>
 									<td>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</td>
-									<td>[[${productVO.pro_discount}]]</td>
+									<td>[[${productVO.pro_amount}]]</td>
 									<td>[[${#dates.format(productVO.pro_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
 									<td></td>
 								</tr>									
@@ -43,14 +67,24 @@
 						</table>
 					</form>
 					</div>
+				</div>
+				</div>
+				</div>
 					<!-- /.card-body -->
 					<div class="card-footer clearfix">
 						<ul class="pagination pagination-sm m-0 float-right">
-							<li class="page-item"><a class="page-link" href="#">«</a></li>
-							<li class="page-item"><a class="page-link" href="#">1</a></li>
-							<li class="page-item"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link" href="#">»</a></li>
+							<th:block th:if= "${pageMaker.prev}">
+							<li class="page-item"><a class="page-link" th:href="|/admin/product/pro_list${pageMaker.makeSearch(pageMaker.startPage-1)}|">«</a></li>
+							</th:block>
+
+							<th:block th:each= "num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+							<li class="page-item" th:classappend="${pageMaker.cri.page == num ? 'active' : ''}">
+								<a class="page-link" th:href="|/admin/product/pro_list${pageMaker.makeSearch(num)}|" th:text="${num}"></a></li>
+							</th:block>
+
+							<th:block th:if= "${pageMaker.next}">
+							<li class="page-item"><a class="page-link" th:href="|/admin/product/pro_list${pageMaker.makeSearch(pageMaker.endPage+1)}|">»</a></li>
+							</th:block>
 						</ul>
 					</div>
 				</div>

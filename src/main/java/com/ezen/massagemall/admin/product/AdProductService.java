@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ezen.massagemall.admin.category.CategoryVO;
+import com.ezen.massagemall.admin.utils.SearchCriteria;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,7 +19,15 @@ public class AdProductService {
 		adProductMapper.pro_insert(vo);
 	}
 
-	public List<ProductVO> pro_list() {
-		return adProductMapper.pro_list();
+	public List<ProductVO> pro_list(SearchCriteria cri) {
+		return adProductMapper.pro_list(cri);
+	}
+
+	public List<CategoryVO> getSecondCategoryList(Integer cate_prtcode) {
+		return adProductMapper.getSecondCategoryList(cate_prtcode);
+	}
+
+	public int getTotalCount(SearchCriteria cri) {
+		return adProductMapper.getTotalCount(cri);
 	}
 }
