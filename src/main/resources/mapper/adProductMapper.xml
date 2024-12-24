@@ -37,6 +37,17 @@
 		
 </select>
 
+<select id="getFirstCategoryList" resultType="com.ezen.massagemall.admin.category.CategoryVO">
+	select
+		cate_code, cate_prtcode, cate_name
+	from
+		category_tbl
+	where
+		cate_prtcode is null
+
+</select>
+
+
 <select id="getSecondCategoryList" resultType="com.ezen.massagemall.admin.category.CategoryVO">
 	select
 		cate_code, cate_prtcode, cate_name
@@ -45,6 +56,17 @@
 	where
 		cate_prtcode=#{cate_prtcode}
 </select>
+<select id="getFirstCategoryBySecondCategory" resultType="com.ezen.massagemall.admin.category.CategoryVO">
+ 
+ 	select 
+ 		cate_code, cate_prtcode, cate_name 
+ 	from 
+ 		category_tbl
+	where 
+		cate_code  = #{secondCategory}
+ 
+ </select>
+
 
 
 <sql id="search">
@@ -63,6 +85,26 @@
 	</if>
 </sql>
 
+<select id="pro_edit_form" resultType="com.ezen.massagemall.admin.product.ProductVO">
+	select
+		pro_num, cate_code, pro_name, pro_price, 
+		pro_discount, pro_content, pro_upfolder, 
+		pro_img, pro_amount, pro_buy, pro_date, pro_updatedate
+	from
+		product_tbl
+	where
+		pro_num = #{pro_num}
+</select>
+<update id="pro_edit">
+	update
+		product_tbl
+	set
+		cate_code=#{cate_code}, pro_name=#{pro_name}, pro_price=#{pro_price}, pro_discount=#{pro_discount},
+		pro_content=#{pro_content}, pro_upfolder=#{pro_upfolder}, pro_img=#{pro_img}, pro_amount=#{pro_amount},
+		pro_buy=#{pro_buy}, pro_updatedate=now()
+	where
+		pro_num=#{pro_num}
+</update>
 
 
 </mapper>

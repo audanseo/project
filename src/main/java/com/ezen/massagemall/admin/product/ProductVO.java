@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 public class ProductVO {
 
-	private int pro_num;
+	private Integer pro_num;
 	private Integer cate_code;
 	private String pro_name;
 	private int pro_rentalprice;

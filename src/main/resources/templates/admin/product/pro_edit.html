@@ -4,16 +4,6 @@
 	<script src="/ckeditor/ckeditor.js"></script>
 	<script>
 		$(document).ready(function(){
-			//id="pro_img_upload"
-			$("#pro_img_upload").on("change", function(e){
-				let file = e.target.files[0]; //파일첨부에서 선택한 한개의파일을 의미
-				let reader = new FileReader();
-				reader.readAsDataURL(file);
-				reader.onload = function(e) {
-					//id="img_preview"
-					$("#img_preview").attr("src", e.target.result);
-				}
-			});
 			//id="btn_firstCategory"
 			$("#btn_firstCategory").on("change", function(){
 				let firstCategoryCode = $("#btn_firstCategory").val();
@@ -33,6 +23,16 @@
 					secondCategoryCode.append(optionStr);
 				});
 			});
+			//id="pro_img_upload"
+			$("#pro_img_upload").on("change", function(e){
+				let file = e.target.files[0]; //파일첨부에서 선택한 한개의파일을 의미
+				let reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e) {
+					//id="img_preview"
+					$("#img_preview").attr("src", e.target.result);
+				}
+			});
 		});
 	</script>
 </th:block>
@@ -42,63 +42,76 @@
 			<div class="col">
 				<div class="card card-primary">
 					<div class="card-header">
-						<h3 class="card-title">상품 등록</h3>
+						<h3 class="card-title">상품 수정</h3>
 					</div>
 					<!-- /.card-header -->
 					<!-- form start -->
-					<form method="post" action="/admin/product/pro_insert" enctype="multipart/form-data">
+					<form method="post" action="/admin/product/pro_edit" enctype="multipart/form-data">
 						<div class="card-body">
 							<div class="form-group">
-								<label>1차카테고리</label> <select class="custom-select" name="cate_prtcode" id="btn_firstCategory">
+								<label>1차카테고리</label> 
+								<select class="custom-select" name="cate_prtcode" id="btn_firstCategory">
 									<option>1차카테고리 선택</option>
-									<option th:each="category : ${cate_list}" th:value="${category.cate_code}" th:text="${category.cate_name}">option 2</option>
+									<option th:each="category : ${cate_list}" th:value="${category.cate_code}" th:text="${category.cate_name}" th:selected= "${category.cate_code == categoryVO.cate_prtcode}">option 2</option>
 								</select>
 							</div>
 							<div class="form-group">
 								<label>2차카테고리</label> 
 								<select class="custom-select" name="cate_code" id="btn_secondCategory">
 									<option>2차카테고리 선택</option>
+									<option th:each= "secondCategoryVO : ${secondCategoryVO}" th:value="${secondCategoryVO.cate_code}" th:text="${secondCategoryVO.cate_name}" th:selected= "${secondCategoryVO.cate_code == productVO. cate_code}"></option>
 								</select>
 							</div>
 							<div class="form-group">
-								<label for="pro_name">상품명</label> <input type="text" class="form-control" id="pro_name" name="pro_name" placeholder="상품명 입력">
+								<label>상품명</label> 
+								<input type="text" class="form-control" id="pro_name" name="pro_name" th:value="${productVO.pro_name}">
+								<input type="hidden" name="pro_num" th:value="${productVO.pro_num}">
+								
+								<!-- 페이징과검색 파라미터 정보. SearchCriteria 클래스의 필드 -->
+								<input type="hidden" name="page" th:value="${cri.page}">
+								<input type="hidden" name="perPageNum" th:value="${cri.perPageNum}">
+								<input type="hidden" name="searchType" th:value="${cri.searchType}">
+								<input type="hidden" name="keyword" th:value="${cri.keyword}">
 							</div>
 							<div class="form-group">
-								<label for="pro_price">가격</label> <input type="text" class="form-control" id="pro_price" name="pro_price" placeholder="가격 입력">
+								<label for="pro_price">가격</label> <input type="text" class="form-control" id="pro_price" name="pro_price" th:value="${productVO.pro_price}">
 							</div>
 							<div class="form-group">
-								<label for="pro_discount">할인율</label> <input type="text" class="form-control" id="pro_discount" name="pro_discount" placeholder="할인율 입력">
+								<label for="pro_discount">할인율</label> <input type="text" class="form-control" id="pro_discount" name="pro_discount" th:value="${productVO.pro_discount}">
 							</div>
 							<div class="form-group">
 								<label for="pro_content">상품설명</label>
-								<textarea class="form-control" id="pro_content" name="pro_content" placeholder="상품설명 입력"></textarea>
+								<textarea class="form-control" id="pro_content" name="pro_content" th:text="${productVO.pro_content}"></textarea>
 							</div>
 							<div class="form-group">
 								<label for="pro_img">상품이미지</label>
 								<div class="input-group">
 									<div class="custom-file">
 										<input type="file" class="custom-file-input" id="pro_img_upload" name="pro_img_upload"> <label class="custom-file-label" for="exampleInputFile">상품이미지파일 선택</label>
+										<input type="hidden" name="pro_upfolder" th:value="${productVO.pro_upfolder}">
+										<input type="hidden" name="pro_img" th:value="${productVO.pro_img}">
 									</div>
 								</div>
 								<div class="form-group">
 									<div>
 										<label>미리보기 이미지</label>
-										<img id="img_preview" style="width: 200px; height: 200px;">
+										<img id="img_preview" style="width: 200px; height: 200px;"
+										th:src="|/admin/product/image_display?dateFolderName=${productVO.pro_upfolder}&fileName=${productVO.pro_img}|">
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="pro_amount">수량</label> <input type="number" class="form-control" id="pro_amount" name="pro_amount" placeholder="수량 입력">
+								<label for="pro_amount">수량</label> <input type="number" class="form-control" id="pro_amount" name="pro_amount" th:value="${productVO.pro_amount}">
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="pro_buy" id="pro_buy1" value="Y" checked>
+								<input class="form-check-input" type="radio" name="pro_buy" id="pro_buy1" value="Y" th:checked= "${productVO.pro_buy == 'Y'}">
 								<label class="form-check-label mr-5" for="pro_buy1">판매함</label>
-								<input class="form-check-input" type="radio" name="pro_buy" value="N" id="pro_buy2">
+								<input class="form-check-input" type="radio" name="pro_buy" value="N" id="pro_buy2" th:checked= "${productVO.pro_buy == 'N'}">
 								<label class="form-check-label" for="pro_buy2">판매안함</label>
 							</div>
 							<!-- /.card-body -->
 						<div class="card-footer">
-							<button type="submit" class="btn btn-primary">Submit</button>
+							<button type="submit" class="btn btn-primary">수정</button>
 						</div>
 					</form>
 				</div>

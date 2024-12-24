@@ -1,9 +1,85 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{admin/layouts/ad_layout}">
 
+<th:block layout:fragment="script">
+	<script src="/ckeditor/ckeditor.js"></script>
+	<script>
+	$(document).ready(function(){
+		let isCheck = true;
+		$("#checkAll").on("click", function(){
+			//console.log("제목행 체크박스");
+			//id="checkAll"
+			$("input[name='check']").prop("checked", this.checked);
+			isCheck = this.checked;
+		});
+		$("input[name='check']").on("click", function(){
+			$("#checkAll").prop("checked", this.checked);
+			$("input[name='check']").each(function(){
+				if(!$(this).is(":checked")) {
+					$("#checkAll").prop("checked", false);
+				}
+			});
+		});
+		// 상품이미지 미리보기.   id="pro_img_upload".  e 매개변수 : 선택한 파일정보
+		$("#pro_img_upload").on("change", function(e) {
+					let file = e.target.files[0]; // 파일첨부에서 선택한 한개의 파일을 가리키는 의미.
+
+					let reader = new FileReader(); // 파일 읽어오는 입력객체.
+					reader.readAsDataURL(file);
+
+					reader.onload = function(e) {
+						$("#img_preview").attr("src", e.target.result);
+					}
+
+				});
+		//id="btn_pro_del"
+		//for문에서는 id를 사용하면 안된다.
+		// $("#btn_pro_del").on("click", function(){
+		// 	if(!confirm("선택하신 상품을 삭제하시겠습니까?")) return;
+		// 	if($("input[name='check']:checked").length == 0) {
+		// 		alert("삭제할 상품을 체크하세요");
+		// 		return;
+		// 	}
+		// });
+
+		//id="btn_firstCategory"
+		$("#btn_firstCategory").on("change", function(){
+				let firstCategoryCode = $("#btn_firstCategory").val();
+				//2차 카테고리목록 가져오기
+				let url = "/admin/product/secondcategory/" + firstCategoryCode;
+				
+				$.getJSON(url, function(secondCategoryList) {
+					let secondCategoryCode = $("#btn_secondCategory");
+					let optionStr = "";
+
+					for(let i=0; i<secondCategoryList.length; i++) {
+						optionStr += `<option value='${secondCategoryList[i].cate_code}'>${secondCategoryList[i].cate_name}</option>`; 
+					}
+
+					secondCategoryCode.find("option").remove();
+					secondCategoryCode.append("<option>2차카테고리 선택</option>");
+					secondCategoryCode.append(optionStr);
+				});
+			});
+		let criteriaForm = $("#criteriaForm");
+		// edit버튼 클릭 name=btn_pro_edit
+		$("button[name='btn_pro_edit']").on("click", function(){
+			//console.log("수정버튼사용");
+			let pro_num = $(this).data("pro_num");
+			$("#pro_num").val(pro_num); // data-pro_num="1"
+			criteriaForm.attr("action", "/admin/product/pro_edit");
+			
+			criteriaForm.submit();
+		});
+		
+	});//ready end
+	</script>
+</th:block>
+
+
 <th:block layout:fragment="content">
 	<div class="container mt-5">
-		<div class="row">
+		<div class="row mt-5">
 			<div class="col">
 				<div class="card">
 					<div class="card-header">
@@ -12,8 +88,8 @@
 					<!-- /.card-header -->
 					<div class="card-body">
 						<div class="row">
-							<div class="col-8">
-								<form>
+							<div class="col-12">
+								<form method="get" action="/admin/product/pro_list">
 									<div class="form-group row">
 										<div class="col-2">
 											<select name="searchType" class="form-control">
@@ -23,11 +99,22 @@
 												<option value="un">상품코드or상품정보</option>
 											</select>
 										</div>
-										<div class="col-4">
+										<div class="col-2">
 											<input type="text" name="keyword" class="form-control" placeholder="Enter ...">
 										</div>
 										<div class="col-2">
 											<button type="submit" class="btn btn-block btn-outline-primary">찾기</button>
+										</div>
+										<div class="col-3">
+											<select name="cate_prtcode" class="form-control" id="btn_firstCategory">
+												<option>1차카테고리 선택</option>
+												<option th:each= "category:${cate_list}" th:value="${category.cate_code}" th:text="${category.cate_name}">option2</option>
+											</select>
+										</div>
+										<div class="col-3">
+											<select name="cate_code" class="form-control" id="btn_secondCategory">
+												<option>2차카테고리 선택</option>
+											</select>
 										</div>
 									</div>
 								</form>
@@ -35,14 +122,16 @@
 						</div>
 					<div class="row">
 						<div class="col">
-						<form>
+							<!-- 폼태그 삭제를 만들기 위해 사용-->
+						<form name="frm_pro_list" id="frm_pro_list" method="" action="">
 						<table class="table table-bordered">
 							<thead>
 								<tr>
 									<th style="width: 5%">
-										<input type="checkbox" id="selectAll">
+										<input type="checkbox" id="checkAll">
 									</th>
 									<th style="width: 10%">상품코드</th>
+									<th style="width: 10%">상품명</th>
 									<th style="width: 30%">상품정보</th>
 									<th style="width: 10%">판매가</th>
 									<th style="width: 10%">수량</th>
@@ -56,15 +145,32 @@
 									<td>[[${productVO.pro_num}]]</td>
 									<td>
 										[[${productVO.pro_name}]] <br>
-										<img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+									</td>
+									<td>
+										<!-- <img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}"> -->
+										<span th:utext="${productVO.pro_content}"></span>
 									</td>
 									<td>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</td>
 									<td>[[${productVO.pro_amount}]]</td>
 									<td>[[${#dates.format(productVO.pro_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
-									<td></td>
+									<td>
+										<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-pro_num="${productVO.pro_num}" name="btn_pro_edit">EDIT</button>
+										<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-pro_num="${productVO.pro_num}" name="btn_pro_del" >DELETE</button>
+									</td>					
 								</tr>									
 							</tbody>
 						</table>
+					</form>
+					<!-- 페이징및검색 파라미터 정보 : 현재 목록상태를 작업(수정,삭제)을 하고 돌아왔을 때 유지. -->
+					<form id="criteriaForm" action="" method="get">
+						<!-- 4개은 페이징,검색파라미터 -->
+						<input type="hidden" name="page" id="page" th:value="${pageMaker.cri.page}" />
+						<input type="hidden" name="perPageNum" id="perPageNum" th:value="${pageMaker.cri.perPageNum}" />
+						<input type="hidden" name="searchType" id="searchType" th:value="${pageMaker.cri.searchType}" />
+						<input type="hidden" name="keyword" id="keyword" th:value="${pageMaker.cri.keyword}" />
+
+						<!-- 수정상품코드 -->
+						<input type="hidden" name="pro_num" id="pro_num">
 					</form>
 					</div>
 				</div>

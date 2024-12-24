@@ -11,12 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ezen.massagemall.admin.category.AdCategoryService;
 import com.ezen.massagemall.admin.category.CategoryVO;
 import com.ezen.massagemall.admin.utils.FileUtils;
 import com.ezen.massagemall.admin.utils.PageMaker;
@@ -35,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AdProductController {
 
 	private final AdProductService adProductService;
-	private final AdCategoryService adCategoryService;
 	private final FileUtils fileUtils;
 
 	@Value("${com.ezen.upload.path}")
@@ -50,7 +50,7 @@ public class AdProductController {
 
 		// List<CategoryVO> getFirstCategoryList =
 		// adCategoryService.getFirstCategoryList();
-		model.addAttribute("cate_list", adCategoryService.getFirstCategoryList());
+		model.addAttribute("cate_list", adProductService.getFirstCategoryList());
 	}
 
 	// 상품등록 input type="file" id="pro_img_upload" name="pro_img_upload"
@@ -127,6 +127,7 @@ public class AdProductController {
 		return entity;
 	}
 
+	// 상품목록
 	@GetMapping("/pro_list")
 	public void pro_list(SearchCriteria cri, Model model) throws Exception {
 		// cri 기억장소에 page, perPageNum, searchType, keyword가 존재
@@ -148,11 +149,10 @@ public class AdProductController {
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(adProductService.getTotalCount(cri));
 		model.addAttribute("pageMaker", pageMaker);
-		model.addAttribute("cate_list", adCategoryService.getFirstCategoryList());
+		model.addAttribute("cate_list", adProductService.getFirstCategoryList());
 	}
 
 	// 2차카테고리
-
 	@GetMapping("/secondcategory/{cate_prtcode}")
 	public ResponseEntity<List<CategoryVO>> getSecondCategoryList(@PathVariable("cate_prtcode") Integer cate_prtcode) {
 		ResponseEntity<List<CategoryVO>> entity = null;
@@ -166,6 +166,58 @@ public class AdProductController {
 	public ResponseEntity<byte[]> image_display(String dateFolderName, String fileName) throws Exception {
 
 		return fileUtils.getFile(uploadPath + "\\" + dateFolderName, fileName);
+	}
+
+	// 상품 수정폼
+	@GetMapping("/pro_edit")
+	public void pro_edit(@ModelAttribute("cri") SearchCriteria cri, Integer pro_num, Model model) throws Exception {
+
+		// 1차카테고리 목록
+		model.addAttribute("cate_list", adProductService.getFirstCategoryList());
+		// 2차카테고리 코드
+		ProductVO productVO = adProductService.pro_edit_form(pro_num);
+
+		productVO.setPro_upfolder(productVO.getPro_upfolder().replace("\\", "/"));
+		model.addAttribute("productVO", productVO);
+
+		// 상품정보가들어있는 2차카테고리
+		int secondCategory = productVO.getCate_code();
+		CategoryVO categoryVO = adProductService.getFirstCategoryBySecondCategory(secondCategory);
+		model.addAttribute("categoryVO", categoryVO);
+
+		// 1차카테고리 코드
+		int firstCategory = categoryVO.getCate_prtcode();
+		model.addAttribute("secondCategoryVO", adProductService.getSecondCategoryList(firstCategory));
+	}
+
+	// 상품수정
+	@PostMapping("/pro_edit")
+	public String pro_edit(ProductVO vo, SearchCriteria cri, MultipartFile pro_img_upload, RedirectAttributes rttr)
+			throws Exception {
+
+		// 1)상품이미지를 변경했을 때
+		if (!pro_img_upload.isEmpty()) {
+
+			fileUtils.delete(uploadPath, "s_" + vo.getPro_upfolder(), vo.getPro_img(), "image");
+
+			// 변경된 이미지로 업로드
+			String dateFolder = fileUtils.getDateFolder();
+			String saveFileName = fileUtils.uploadFile(uploadPath, dateFolder, pro_img_upload);
+
+			vo.setPro_upfolder(dateFolder);
+			vo.setPro_img(saveFileName);
+
+		}
+
+		adProductService.pro_edit(vo);
+
+		// 원래상태의 목록으로 주소이동작업.
+		rttr.addAttribute("page", cri.getPage());
+		rttr.addAttribute("perPageNum", cri.getPerPageNum());
+		rttr.addAttribute("searchType", cri.getSearchType());
+		rttr.addAttribute("keyword", cri.getKeyword());
+
+		return "redirect:/admin/product/pro_list";
 	}
 
 }
