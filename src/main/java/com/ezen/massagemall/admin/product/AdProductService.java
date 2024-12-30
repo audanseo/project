@@ -46,4 +46,12 @@ public class AdProductService {
 	public void pro_edit(ProductVO vo) {
 		adProductMapper.pro_edit(vo);
 	}
+
+	public void pro_delete(Integer pro_num) {
+		adProductMapper.pro_delete(pro_num);
+	}
+
+	public void pro_sel_delete(int[] pro_num_arr) {
+		adProductMapper.pro_sel_delete(pro_num_arr);
+	}
 }

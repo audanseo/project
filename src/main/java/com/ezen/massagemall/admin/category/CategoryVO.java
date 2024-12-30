@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 public class CategoryVO {
 
-	private Integer cate_code;
-	private Integer cate_prtcode;
+	private Integer cate_code; // 1차
+	private Integer cate_prtcode;// 2차
 	private String cate_name;
 }

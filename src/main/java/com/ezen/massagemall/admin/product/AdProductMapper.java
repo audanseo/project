@@ -22,4 +22,8 @@ public interface AdProductMapper {
 	ProductVO pro_edit_form(Integer pro_num);
 
 	void pro_edit(ProductVO vo);
+
+	void pro_delete(Integer pro_num);
+
+	void pro_sel_delete(int[] pro_num_arr);
 }

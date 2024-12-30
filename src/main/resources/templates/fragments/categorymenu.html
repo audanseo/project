@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<th:block th:fragment="category">
+    <ul class="nav nav-tabs">
+        <li class="nav-item dropdown" th:each="menu : ${cate_list}">
+            <button
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+                id="category_menu"
+                th:data-cate_code="${menu.cate_code}"
+                th:text="${menu.cate_name}"
+                href="#"
+                role="button"
+                aria-expanded="false"
+            >
+            
+            </button>
+            <ul class="dropdown-menu" id="subCategory_menu">
+            </ul>
+        </li>
+    </ul>
+    <script>
+        $(document).ready(function(){
+            $("button#category_menu").on("click", function(){
+                let current = $(this);
+                let first_category = current.data("cate_code");
+                //console.log("1차코드", first_category);
+            $.ajax({
+                url : '/admin/product/secondcategory/' + first_category,
+                type : 'get',
+                dataType : 'json',
+                success : function(subCategoryList) {                    
+                    let subCategoryStr = "";
+                    for(let i=0; i<subCategoryList.length; i++){
+                        subCategoryStr += `<li><a class="dropdown-item" href="#" data-subcatecode=${subCategoryList[i].cate_code}>${subCategoryList[i].cate_name}</a></li>`;
+                    
+                    }
+
+                    current.next().html(subCategoryStr);
+                } 
+            });
+
+            });
+            //id="subCategory_menu"
+            $("ul#subCategory_menu").on("click", function(){
+                //console.log("2차카테고리 클릭");
+                let cate_name = encodeURIComponent($(this).html()); //2차카테고리 이름
+            });
+        });
+    </script>
+</th:block>
+</html>

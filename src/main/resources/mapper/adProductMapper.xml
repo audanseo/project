@@ -105,6 +105,23 @@
 	where
 		pro_num=#{pro_num}
 </update>
+<delete id="pro_delete">
+	delete from
+		product_tbl
+	where
+		pro_num=#{pro_num}
+	
+</delete>
+<delete id="pro_sel_delete">
+	delete from
+		product_tbl
+	where
+		pro_num in
+		<!-- 번호를 1,5,7 번을가지고 오기위해서 foreach구문사용 -->
+	<foreach collection="pro_num_arr" item="item" open="(" separator="," close=")">
+	#{item}
+	</foreach>
 
+</delete>
 
 </mapper>

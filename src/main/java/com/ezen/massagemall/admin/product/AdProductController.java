@@ -220,4 +220,28 @@ public class AdProductController {
 		return "redirect:/admin/product/pro_list";
 	}
 
+	@GetMapping("/pro_delete")
+	public String pro_delete(SearchCriteria cri, Integer pro_num, RedirectAttributes rttr) throws Exception {
+		adProductService.pro_delete(pro_num);
+		// 원래상태의 목록으로 주소이동작업.
+		rttr.addAttribute("page", cri.getPage());
+		rttr.addAttribute("perPageNum", cri.getPerPageNum());
+		rttr.addAttribute("searchType", cri.getSearchType());
+		rttr.addAttribute("keyword", cri.getKeyword());
+
+		return "redirect:/admin/product/pro_list";
+	}
+
+	// 폼태그 삭제
+	@PostMapping("/pro_sel_delete")
+	public String pro_sel_delete(int[] check, String[] pro_upfolder, String[] pro_img) throws Exception {
+
+		adProductService.pro_sel_delete(check);
+//		log.info("체크된상품코드 개수" + check.length);
+		for (int i = 0; i < check.length; i++) {
+			fileUtils.delete(uploadPath, pro_upfolder[i], pro_img[i], "image");
+		}
+		return "redirect:/admin/product/pro_list";
+	}
+
 }
