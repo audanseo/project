@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezen.massagemall.product.ProductMapper">
+	
+	<select id="getProductListBysecondCategory" resultType="com.ezen.massagemall.admin.product.ProductVO">
+	select
+		pro_num, cate_code, pro_name, pro_rentalprice, pro_price, pro_discount, pro_content, pro_upfolder, pro_img, pro_amount,
+		pro_buy, pro_date, pro_updatedate 
+	from
+		product_tbl
+	where 
+		cate_code=#{cate_code}
+	and
+		pro_buy = 'Y'
+	
+		
+	</select>
+</mapper>

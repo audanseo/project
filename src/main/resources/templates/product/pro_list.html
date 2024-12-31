@@ -2,30 +2,59 @@
 <html xmlns:th="http://www.thymeleaf.org"
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="script">
+    <script>
+        $(document).ready(function(){
+            //<span name="pro_content" th:utext="${productVO.pro_content}"></span> 클릭
+            $("span[name='pro_content']").on("click", function(){
+                //console.log("클릭이 잘됩니다");
+                let pro_num = $(this).data("pro_num");
+                let cate_name = $(this).data("pro_name");
+                //console.log(this); 
+                //<span data-pro_num="8" name="pro_content"><img alt="" src="/admin/product/display/attach.png" style="height:76px; width:100px">팬텀네오입니다</span>
+                $("#pro_num").val(pro_num);
+                $("#cate_name").val(cate_name);
+
+                let frm = $("#frm_pro_info");
+                frm.submit();
+            });
+        });
+    </script>
+
+</th:block>
 
 <th:block layout:fragment="content">
+    <div style="margin: auto; text-align: center;">
         <img src="/images/attach.png" style="width: 40%; height: 40%;" alt="...">
-
-        <!--https://www.freecodecamp.org/korean/news/csswa-htmleseo-svg-imiji-sayonghaneun-bangbeob-ibmunjayong-tyutorieol/-->
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <th:block th:each="num : ${#numbers.sequence(1,3)}">
-                    <div class="col">
-                        <div class="card shadow-sm">
-                            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-                            <div class="card-body">
-                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                                    </div>
-                                    <small class="text-body-secondary">9 mins</small>
-                                </div>
+        <h3 th:text="${cate_name}"></h3>
+    </div>
+    <form id="frm_pro_info" method="get" action="/product/pro_info">
+        <input type="hidden" name="cate_name" id="cate_name">
+        <input type="hidden" name="pro_num" id="pro_num">
+    </form>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">    
+                <div class="col" th:each= "productVO:${pro_list}">
+                    <div class="card shadow-sm">
+                        <!--
+                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                        -->
+                <!-- <img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}"> -->
+                        <span th:data-pro_name="${productVO.pro_name}" th:data-pro_num="${productVO.pro_num}" name="pro_content" th:utext="${productVO.pro_content}"></span>
+                        <input type="hidden" name="pro_upfolder" th:value="${productVO.pro_upfolder}">
+                        <input type="hidden" name="pro_img" th:value="|s_${productVO.pro_img}|">
+                        <div class="card-body">
+                            <h6 th:text="${productVO.pro_name}"></h6>
+                            <span>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</span>
+                            <div class="mt-1">수량 <input type="number" style="width: 48px;" value="1" min="1"></div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" th:data-pro_num="${productVO.pro_num}">장바구니</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" th:data-pro_num="${productVO.pro_num}" th:data-pro_amount="${productVO.pro_amount}">구매</button>
+                                </div>  
                             </div>
                         </div>
                     </div>
-                </th:block>
-            </div>
-            
+                </div>
+            </div>     
 </th:block>
 </html>

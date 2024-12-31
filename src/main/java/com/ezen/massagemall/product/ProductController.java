@@ -3,11 +3,14 @@ package com.ezen.massagemall.product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ezen.massagemall.admin.product.AdProductService;
 import com.ezen.massagemall.admin.utils.FileUtils;
+import com.ezen.massagemall.admin.utils.SearchCriteria;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +33,16 @@ public class ProductController {
 
 	// 상품리스트 추가
 	@GetMapping("/pro_list")
-	public void pro_list() {
+	public void pro_list(SearchCriteria cri, @ModelAttribute("cate_name") String cate_name, Integer cate_code,
+			Model model) throws Exception {
+
+		log.info("카테고리 명 " + cate_name);
+
+		// 1차 카테고리
+		model.addAttribute("cate_list", adProductService.getFirstCategoryList());
+
+		// 2차 카테고리
+		model.addAttribute("pro_list", productService.getProductListBysecondCategory(cri, cate_code));
 
 	}
 

@@ -13,7 +13,6 @@
                 role="button"
                 aria-expanded="false"
             >
-            
             </button>
             <ul class="dropdown-menu" id="subCategory_menu">
             </ul>
@@ -42,9 +41,15 @@
 
             });
             //id="subCategory_menu"
-            $("ul#subCategory_menu").on("click", function(){
-                //console.log("2차카테고리 클릭");
-                let cate_name = encodeURIComponent($(this).html()); //2차카테고리 이름
+            //<li><a class="dropdown-item" href="#" data-subcatecode="2">안마기기</a></li>
+            $("ul#subCategory_menu").on("click", "li a.dropdown-item", function(e){
+                console.log("2차카테고리 클릭");
+                e.preventDefault();
+                let cate_name = encodeURIComponent($(this).html()); //2차카테고리 이름         
+                let cate_code = $(this).data("subcatecode");
+                //console.log(this);
+                //<a class="dropdown-item" href="#" data-subcatecode="2">안마기기</a>
+                location.href= `/product/pro_list?cate_name=${cate_name}&cate_code=${cate_code}`;
             });
         });
     </script>
