@@ -11,4 +11,6 @@ public interface ProductMapper {
 
 	List<ProductVO> getProductListBysecondCategory(@Param("cri") SearchCriteria cri,
 			@Param("cate_code") Integer seconde_cate_code);
+
+	ProductVO pro_info(Integer pro_num);
 }

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <style>
+        #pro_img{
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</th:block>
+<th:block layout:fragment="script">
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+<script>
+    $(function(){
+        $("#tabs").tabs();
+    })
+    
+</script>
+<script>
+    $(document).ready(function(){
+        //id="btn_cart_add"
+        $("#btn_cart_add").on("click", function(){
+            //console.log("클릭이 잘됩니다");
+            $.ajax({
+                url : '/cart/cart_add',
+                type : 'post',
+                data : {pro_num : [[${productVO.pro_num}]], cart_amount : $("#cart_amount").val()},
+                dataType : 'text',
+                success : function(result){
+                    alert("장바구니에 등록되었습니다");
+                    if(confirm("장바구니로 이동하시겠습니까?")) {
+                        location.href = "/cart/cart_list";
+                    }
+                }
+            });
+        });
+
+    });
+
+</script>
+</th:block>
+<th:block layout:fragment="content">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col-6">
+            <img style="width: 100%; height: auto;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+        </div>
+        <div class="col-6" style="position: relative; padding-bottom: 50px;">
+            <h4 th:text="${productVO.pro_name}"></h4>
+            <div style="display: flex;"><h4>할인율 :</h4><h4 th:text="${productVO.pro_discount}"></h4></div>
+            <div style="display: flex;"><h4>판매가격 :</h4><h4>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</h4> </div>
+            <div style="display: flex;"><h4>수량 : </h4><input type="number" style="width: 48px;" id="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></div>
+            <div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
+                <button type="button" class="btn btn-sm btn-outline-secondary"  id="btn_cart_add">장바구니</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">구매</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="row mt-5">
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">상세정보</a></li>
+                <li><a href="#tabs-2">리뷰</a></li>
+                <li><a href="#tabs-3">QnA</a></li>
+            </ul>
+            <div id="tabs-1">
+                <p>상세내용</p>
+                <p th:utext="${productVO.pro_content}"></p>
+            </div>
+            <div id="tabs-2">
+                <p>리뷰</p>
+            </div>
+            <div id="tabs-3">
+                <p>QnA</p>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+</html>

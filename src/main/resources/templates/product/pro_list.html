@@ -9,16 +9,40 @@ layout:decorate="~{layouts/layout}">
             $("span[name='pro_content']").on("click", function(){
                 //console.log("클릭이 잘됩니다");
                 let pro_num = $(this).data("pro_num");
-                let cate_name = $(this).data("pro_name");
+                let pro_name = $(this).data("pro_name");
                 //console.log(this); 
                 //<span data-pro_num="8" name="pro_content"><img alt="" src="/admin/product/display/attach.png" style="height:76px; width:100px">팬텀네오입니다</span>
                 $("#pro_num").val(pro_num);
-                $("#cate_name").val(cate_name);
+                $("#pro_name").val(pro_name);
 
                 let frm = $("#frm_pro_info");
                 frm.submit();
             });
-        });
+            //name="btn_cart_add"
+            $("button[name='btn_cart_add']").on("click", function(){
+                //console.log("클릭이 잘됩니다");
+                let pro_num = $(this).data("pro_num");
+                let cart_amount = $(this).parents("div.car-body").find("input[name='cart_amount']").val();
+
+                //console.log("수량", cart_amount);
+                $.ajax({
+                    url : '/cart/cart_add',
+                    type: 'post',
+                    data: {pro_num : pro_num, cart_amount : cart_amount},
+                    dataType: 'text',
+                    success: function(result){
+                        if(result == "success") {
+                            alert("장바구니에 등록되었습니다.");
+                            if(confirm("장바구니 페이지로 이동합니다."));
+                            location.href = "/cart/cart_list";
+                        }   
+                            
+                    }
+                })
+            
+            });
+
+        }); //ready end
     </script>
 
 </th:block>
@@ -28,8 +52,9 @@ layout:decorate="~{layouts/layout}">
         <img src="/images/attach.png" style="width: 40%; height: 40%;" alt="...">
         <h3 th:text="${cate_name}"></h3>
     </div>
+    <!-- 쿼리스트링으로 넘길때 http://localhost:8888/product/pro_info?pro_name=팬텀&pro_num=7-->
     <form id="frm_pro_info" method="get" action="/product/pro_info">
-        <input type="hidden" name="cate_name" id="cate_name">
+        <input type="hidden" name="pro_name" id="pro_name">
         <input type="hidden" name="pro_num" id="pro_num">
     </form>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">    
@@ -42,13 +67,13 @@ layout:decorate="~{layouts/layout}">
                         <span th:data-pro_name="${productVO.pro_name}" th:data-pro_num="${productVO.pro_num}" name="pro_content" th:utext="${productVO.pro_content}"></span>
                         <input type="hidden" name="pro_upfolder" th:value="${productVO.pro_upfolder}">
                         <input type="hidden" name="pro_img" th:value="|s_${productVO.pro_img}|">
-                        <div class="card-body">
+                        <div class="card-body" style="position: relative; min-height: 200;">
                             <h6 th:text="${productVO.pro_name}"></h6>
                             <span>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</span>
-                            <div class="mt-1">수량 <input type="number" style="width: 48px;" value="1" min="1"></div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group mt-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" th:data-pro_num="${productVO.pro_num}">장바구니</button>
+                            <div class="mt-1">수량 <input type="number" style="width: 48px;" name="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" name="btn_cart_add" th:data-pro_num="${productVO.pro_num}">장바구니</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" th:data-pro_num="${productVO.pro_num}" th:data-pro_amount="${productVO.pro_amount}">구매</button>
                                 </div>  
                             </div>

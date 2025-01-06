@@ -18,4 +18,8 @@ public class ProductService {
 	public List<ProductVO> getProductListBysecondCategory(SearchCriteria cri, Integer seconde_cate_code) {
 		return productMapper.getProductListBysecondCategory(cri, seconde_cate_code);
 	}
+
+	public ProductVO pro_info(Integer pro_num) {
+		return productMapper.pro_info(pro_num);
+	}
 }

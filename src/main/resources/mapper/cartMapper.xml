@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezen.massagemall.cart.CartMapper">
+	<insert id="cart_add">
+	insert into 
+		cart_tbl(pro_num,mc_email,cart_amount)
+	values
+		(#{pro_num},#{mc_email},#{cart_amount})
+	on duplicate key
+		update cart_amount = cart_amount + #{cart_amount}
+	</insert>
+	
+	<select id="cart_list" resultType="HashMap">
+	select 
+		c.pro_num, c.mc_email, p.pro_name,p.pro_upfolder, p.pro_img, p.pro_price, c.cart_amount*p.pro_price as unitprice
+	from 
+		cart_tbl c 
+	inner join 
+		product_tbl p 
+	on 
+		c.pro_num = p.pro_num
+	where 
+		c.mc_email = #{mc_email}
+	
+	</select>
+	
+</mapper>

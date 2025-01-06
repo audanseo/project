@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ezen.massagemall.admin.product.AdProductService;
+import com.ezen.massagemall.admin.product.ProductVO;
 import com.ezen.massagemall.admin.utils.FileUtils;
 import com.ezen.massagemall.admin.utils.SearchCriteria;
 
@@ -43,6 +44,22 @@ public class ProductController {
 
 		// 2차 카테고리
 		model.addAttribute("pro_list", productService.getProductListBysecondCategory(cri, cate_code));
+
+	}
+
+	// pro_info?pro_name=파라오&pro_num=9
+	// 상품 상세페이지
+	@GetMapping("/pro_info")
+	public void pro_info(@ModelAttribute("pro_name") String pro_name, Integer pro_num, Model model) throws Exception {
+		// log.info("카테고리명" + pro_name);
+
+		model.addAttribute("cate_list", adProductService.getFirstCategoryList());
+
+		ProductVO productVO = productService.pro_info(pro_num);
+
+		// 이미지파일의 날짜폴더\를 /변환작업
+		productVO.setPro_upfolder(productVO.getPro_upfolder().replace("\\", "/"));
+		model.addAttribute("productVO", productVO);
 
 	}
 
