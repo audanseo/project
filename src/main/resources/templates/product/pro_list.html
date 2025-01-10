@@ -22,9 +22,9 @@ layout:decorate="~{layouts/layout}">
             $("button[name='btn_cart_add']").on("click", function(){
                 //console.log("클릭이 잘됩니다");
                 let pro_num = $(this).data("pro_num");
-                let cart_amount = $(this).parents("div.car-body").find("input[name='cart_amount']").val();
+                let cart_amount = $(this).parents("div.card-body").find("input[name='cart_amount']").val();
 
-                //console.log("수량", cart_amount);
+                console.log("수량", cart_amount);
                 $.ajax({
                     url : '/cart/cart_add',
                     type: 'post',

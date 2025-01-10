@@ -12,7 +12,7 @@
 	
 	<select id="cart_list" resultType="HashMap">
 	select 
-		c.pro_num, c.mc_email, p.pro_name,p.pro_upfolder, p.pro_img, p.pro_price, c.cart_amount*p.pro_price as unitprice
+		c.pro_num, c.mc_email, p.pro_name, p.pro_upfolder, p.pro_img, p.pro_price, c.cart_amount ,c.cart_amount*p.pro_price as unitprice
 	from 
 		cart_tbl c 
 	inner join 
@@ -23,5 +23,55 @@
 		c.mc_email = #{mc_email}
 	
 	</select>
+	
+	<select id="getCartTotalPriceByUserId" resultType="Integer">
+	select
+		sum(p.pro_price*c.cart_amount) as total_price
+	from
+		cart_tbl c
+	inner join
+		product_tbl p
+	on
+		c.pro_num = p.pro_num
+	where
+		c.mc_email = #{mc_email}
+	
+	</select>
+	
+	<update id="cart_change">
+		update
+			cart_tbl
+		set
+			cart_amount = #{cart_amount}
+		where
+			pro_num = #{pro_num}
+		and
+			mc_email = #{mc_email}
+	</update>
+	
+	<delete id="cart_sel_delete">
+	
+	delete from
+		cart_tbl
+		where
+			pro_num in
+		<foreach collection="pro_num_arr" item="item" open="(" separator="," close=")">
+		#{item}
+		</foreach>
+		and
+			mc_email = #{mc_email}
+	
+	</delete>
+	<delete id="cart_empty">
+	
+	delete from
+		cart_tbl
+	where 
+		mc_email = #{mc_email}
+	
+	</delete>
+	
+	
+	
 	
 </mapper>

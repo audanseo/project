@@ -33,6 +33,7 @@ public class CartController {
 
 	@PostMapping("/cart_add")
 	public ResponseEntity<String> cart_add(CartVO vo, HttpSession session) throws Exception {
+		log.info("장바구니" + vo);
 		ResponseEntity<String> entity = null;
 		// 로그인 불러오기
 		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
@@ -47,6 +48,7 @@ public class CartController {
 	@GetMapping("cart_list")
 	public void cart_list(HttpSession session, Model model) throws Exception {
 		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
+
 		List<Map<String, Object>> cart_list = cartService.cart_list(mc_email);
 
 		cart_list.forEach(cartVO -> {
@@ -54,6 +56,33 @@ public class CartController {
 		});
 		model.addAttribute("cart_list", cart_list);
 
+		model.addAttribute("cart_total_price", cartService.getCartTotalPriceByUserId(mc_email));
+	}
+
+	@GetMapping("/cart_change")
+	public String cart_change(CartVO vo, HttpSession session) throws Exception {
+		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
+		vo.setMc_email(mc_email);
+
+		cartService.cart_change(vo);
+
+		return "redirect:/cart/cart_list";
+	}
+
+	@PostMapping("/cart_sel_delete")
+	public String cart_sel_delete(int[] check, HttpSession session) throws Exception {
+		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
+
+		cartService.cart_sel_delete(check, mc_email);
+		return "redirect:/cart/cart_list";
+	}
+
+	@GetMapping("/cart_empty")
+	public String cart_empty(HttpSession session) throws Exception {
+		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
+
+		cartService.cart_empty(mc_email);
+		return "redirect:/cart/cart_list";
 	}
 
 	@GetMapping("/image_display")

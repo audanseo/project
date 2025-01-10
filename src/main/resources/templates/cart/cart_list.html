@@ -3,47 +3,119 @@
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
 layout:decorate="~{layouts/layout}">
 
+<th:block layout:fragment="script">
+	<script>
+		$(document).ready(function(){
+		//id="checkAll"
+			$("#checkAll").on("click", function(){
+				$("input[name='check']").prop("checked", this.checked);
+				isCheck = this.checked;
+			});
+			$("input[name='check']").on("click", function(){
+				$("checkAll").prop("checked", this.checked);
+				$("input[name='check']").each(function(){
+					if(!$(this).is(":checked")) {
+						$("#checkAll").prop("checked", false);
+					}
+				});
+			});
+
+			//name="cart_amount"
+			$("input[name='cart_amount']").change(function(){
+				calculateTotal();
+			});
+			function calculateTotal() {
+				let total = 0;
+				$("input[name='cart_amount']").each(function(){
+					const quantity = $(this).val();
+					const price = $(this).data("pro_price");
+
+					total += quantity * price;
+				});
+				$("#cart_total").text(total.toLocaleString('ko-KR') + "원");
+			}
+			
+			$("#btn_shopping").on("click", function() {
+				location.href = "/";
+			});
+
+			$("#btn_sel_delete").on("click", function() {
+        		// id="cartForm"
+        
+				if(!confirm("삭제하시겠습니까?")) return;
+        
+				let cartForm = $("#cartForm");
+				cartForm.submit();
+			});
+
+			//id= btn_cart_empty
+			$("#btn_cart_empty").on("click", function(){
+				location.href = "/cart/cart_empty"
+			})
+
+			//btn_order_info
+			$("#btn_order_info").on("click", function(){
+                location.href = "/order/order_info?type=cart"
+            });
+
+		}); //ready end
+
+	</script>
+
+</th:block>
+
+
 <th:block layout:fragment="content">
 	<h3 class="card-title">장바구니</h3>
 	<!-- /.card-header -->
 	<div class="card-body">
-
 		<div class="row">
 			<div class="col">
 				<!-- 폼태그 삭제를 만들기 위해 사용-->
 				<form id="cartForm" method="post" action="/cart/cart_sel_delete">
-					<table class="table table-bordered">
+					<table class="table">
 						<thead>
 							<tr>
-								<th style="width: 10%"><input type="checkbox" id="checkAll"></th>
-								<th style="width: 30%">상품이미지</th>
+								<th style="width: 5%"><input type="checkbox" id="checkAll"></th>
+								<th style="width: 10%">상품코드</th>
+								<th style="width: 25%">상품이미지</th>
 								<th style="width: 10%">상품명</th>
-								<th style="width: 20%">가격</th>
 								<th style="width: 10%">수량</th>
+								<th style="width: 20%">가격</th>
 								<th style="width: 20%">합계</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="productVO:${pro_list}">
-								<td><input type="checkbox" name="check" th:value="${productVO.pro_num}"></td>
-								<td>[[${productVO.pro_num}]]</td>
-								<td>[[${productVO.pro_name}]] <br>
+							<!-- inner join으로 item으로 변경-->
+							<tr th:each="item:${cart_list}">
+								<td><input type="checkbox" name="check" th:value="${item.pro_num}"></td>
+								<td>[[${item.pro_num}]]</td>
+								<td>
+									<img style="width: 200px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + item.pro_upfolder + '&fileName=s_' + item.pro_img}">
+								</td>
+								<td>[[${item.pro_name}]]
 								</td>
 								<td>
-									<!-- <img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}"> --> <span th:utext="${productVO.pro_content}"></span> <input type="hidden" name="pro_upfolder" th:value="${productVO.pro_upfolder}"> <input type="hidden" name="pro_img" th:value="|s_${productVO.pro_img}|">
+									<input type="number" name="cart_amount" th:data-pro_price="${item.pro_price}" th:value="${item.cart_amount}" th:max="${item.cart_amount}" value="1" min="1">
 								</td>
-								<td>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</td>
-								<td>[[${productVO.pro_amount}]]</td>
-								<td>[[${#dates.format(productVO.pro_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
-								<td>
-									<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-pro_num="${productVO.pro_num}" name="btn_pro_edit">EDIT</button>
-									<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-pro_num="${productVO.pro_num}" name="btn_pro_del">DELETE</button>
-								</td>
+								<td>[[${#numbers.formatInteger(item.pro_price, 3, 'COMMA') + '원'}]]</td>
+								<td>[[${#numbers.formatInteger(item.unitprice, 3, 'COMMA') + '원'}]]</td>
 							</tr>
 						</tbody>
 					</table>
 				</form>
 			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<button type="button" class="btn btn-secondary" id="btn_sel_delete">선택삭제</button>
+			<button type="button" class="btn btn-danger" id="btn_cart_empty">장바구니비우기</button>
+		</div>
+		<div class="col-6" style="text-align: right;">
+			<button type="button" class="btn btn-success" id="btn_order_info">주문하기</button>
+			<button type="button" class="btn btn-info" id="btn_shopping">쇼핑하기</button>	
+			<span id="cart_total" th:text="|결제금액 :${#numbers.formatInteger(cart_total_price, 3, 'COMMA') + '원'}|"></span>
 		</div>
 	</div>
 </th:block>
