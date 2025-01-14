@@ -10,6 +10,20 @@
 		update cart_amount = cart_amount + #{cart_amount}
 	</insert>
 	
+	<select id="getCartDetailsByUserId" resultType="HashMap">
+	select 
+		p.pro_num , p.pro_name , p.pro_price , p.pro_upfolder , p.pro_img , c.cart_amount 
+	from 
+		cart_tbl c
+	inner join 
+		product_tbl p
+	on 
+		c.pro_num = p.pro_num
+	where 
+		c.mc_email = #{mc_email} 
+	
+	</select>
+	
 	<select id="cart_list" resultType="HashMap">
 	select 
 		c.pro_num, c.mc_email, p.pro_name, p.pro_upfolder, p.pro_img, p.pro_price, c.cart_amount ,c.cart_amount*p.pro_price as unitprice

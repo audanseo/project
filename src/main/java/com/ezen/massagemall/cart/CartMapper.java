@@ -8,6 +8,8 @@ public interface CartMapper {
 
 	void cart_add(CartVO vo);
 
+	List<Map<String, Object>> getCartDetailsByUserId(String mc_email);
+
 	List<Map<String, Object>> cart_list(String mc_email);
 
 	Integer getCartTotalPriceByUserId(String mc_email);

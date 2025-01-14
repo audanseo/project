@@ -18,6 +18,10 @@ public class CartService {
 		cartMapper.cart_add(vo);
 	}
 
+	public List<Map<String, Object>> getCartDetailsByUserId(String mc_email) {
+		return cartMapper.getCartDetailsByUserId(mc_email);
+	}
+
 	public List<Map<String, Object>> cart_list(String mc_email) {
 		return cartMapper.cart_list(mc_email);
 	}
