@@ -2,4 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ezen.massagemall.order.OrderMapper">
 
+<!-- auto_increment 성격으로 인해서 useGeneratedKeys 사용 -->
+<insert id="order_insert" useGeneratedKeys="true" keyProperty="ord_code">
+	insert into 
+		order_tbl
+			(mc_email, ord_name, ord_zipcode, ord_addr, ord_deaddr, ord_phone, ord_price)
+	values(#{mc_email},#{ord_name},#{ord_zipcode},#{ord_addr},#{ord_deaddr},#{ord_phone},#{ord_price})
+
+</insert>
+
 </mapper>

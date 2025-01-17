@@ -14,14 +14,19 @@ import lombok.Getter;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class ReadyRequest {
 
-	private String cid;
-	private String partner_order_id;
-	private String partner_user_id;
-	private String item_name;
-	private int quantity;
-	private int total_amount;
-	private int tax_free_amount;
+	private String cid; // 가맹점코드 10자
+	private String partner_order_id; // 가맹점 주문번호
+	private String partner_user_id; // 가맹점 회원id
+	private String item_name; // 상품명
+	private Integer quantity; // 상품수량
+	private Integer total_amount; // 상품총액
+	private Integer tax_free_amount; // 상품비과세금액
 	private String approval_url;
 	private String cancel_url;
 	private String fail_url;
+
+	public ReadyRequest(String cid, String partner_order_id) {
+		this.cid = cid;
+		this.partner_order_id = partner_order_id;
+	}
 }

@@ -11,9 +11,9 @@ layout:decorate="~{layouts/layout}">
             $("#ord_phone_2").val($("#ord_phone").val());
             $("#ord_mail_2").val($("#ord_mail").val());
 
-            $("#sample2_postcode").val($("#ord_addr_zipcode").val());
-            $("#sample2_address").val($("#ord_addr_basic").val());
-            $("#sample2_detailAddress").val($("#ord_addr_detail").val());
+            $("#sample2_postcode").val($("#ord_zipcode").val());
+            $("#sample2_address").val($("#ord_addr").val());
+            $("#sample2_detailAddress").val($("#ord_deaddr").val());
         });
         //id="receive_info_1" 새로운주소 클릭
         $("#receive_info_1").on("click", function(){
@@ -35,6 +35,27 @@ layout:decorate="~{layouts/layout}">
                 $("div#account_transfer").hide();
             }
         });
+        //id="btn_order_payment"
+        $("#btn_order_payment").on("click", function(){
+            let pay_method = $("input[name='pay_method']:checked").val();
+            if(pay_method == "account_transfer") {
+                $("#p_method").val("계좌이체");
+                $("#orderForm").submit();
+
+            }else if(pay_method == "kakaopay") {
+                
+                $.ajax({
+                    url : '/kakao/kakaopay',
+                    type: 'post',
+                    data: { item_name : [[${item_name}]], quantity : [[${quantity}]], ord_price: [[${order_total_price}]], ord_name : $("#ord_name_2").val(), ord_zipcode : $("#sample2_postcode").val(), ord_addr : $("#sample2_address").val(), ord_deaddr : $("#sample2_detailAddress").val(), ord_phone : $("#ord_phone_2").val(), ord_mail : $("#ord_mail_2").val()},
+                    success : function(response) {
+                        location.href = response.next_redirect_pc_url;
+                    }
+                });
+                
+            }
+        });
+
     });//ready end
     </script>
 </th:block>
@@ -75,7 +96,7 @@ layout:decorate="~{layouts/layout}">
         </div>
 
         <!-- 주문자, 배송지 정보-->
-    <form id="orderForm">
+    <form id="orderForm" action="/order/order_save" method="post">
         <div class="row">
             <div class="col">
                 <div class="card-header mb-3">
@@ -85,9 +106,14 @@ layout:decorate="~{layouts/layout}">
                     <div class="row">
                         <div class="col-2">
                         <label for="user_name">이름</label>
-                        <input type="hidden" id="ord_addr_zipcode" th:value="${userVO.mc_zipcode}">
-                        <input type="hidden" id="ord_addr_basic" th:value="${userVO.mc_addr}">
-                        <input type="hidden" id="ord_addr_detail" th:value="${userVO.mc_deaddr}">
+                        <input type="hidden" id="ord_zipcode" th:value="${userVO.mc_zipcode}">
+                        <input type="hidden" id="ord_addr" th:value="${userVO.mc_addr}">
+                        <input type="hidden" id="ord_deaddr" th:value="${userVO.mc_deaddr}">
+                        <!--전체금액-->
+                        <input type="hidden" id="order_price" th:value="${order_total_price}">
+                        <!--결제방식-->
+                        <input type="hidden" id="p_method">
+
                         <input type="text" class="form-control" id="ord_name" th:value="${userVO.mc_name}">
                         </div>
                         <div class="col-2">
@@ -127,15 +153,15 @@ layout:decorate="~{layouts/layout}">
                     </div>
                     <div class="col-2">
                         <label for="mc_zipcode">우편번호</label><button type="button" onclick="sample2_execDaumPostcode()">우편번호</button>
-                        <input type="text" class="form-control" id="sample2_postcode" name="ord_addr_zipcode" th:value="${userVO.mc_zipcode}">
+                        <input type="text" class="form-control" id="sample2_postcode" name="ord_zipcode" th:value="${userVO.mc_zipcode}">
                     </div>
                     <div class="col-3">
                         <label for="mc_addr">기본주소</label>
-                        <input type="text" class="form-control" id="sample2_address" name="ord_addr_basic" th:value="${userVO.mc_addr}">
+                        <input type="text" class="form-control" id="sample2_address" name="ord_addr" th:value="${userVO.mc_addr}">
                     </div>
                     <div class="col-2">
                         <label for="mc_deaddr">나머지주소</label>
-                        <input type="text" class="form-control" id="sample2_detailAddress" name="ord_addr_detail" th:value="${userVO.mc_deaddr}">
+                        <input type="text" class="form-control" id="sample2_detailAddress" name="ord_deaddr" th:value="${userVO.mc_deaddr}">
                     </div>
                 </div>
             </div>
