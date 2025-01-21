@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezen.massagemall.admin.utils.FileUtils;
+import com.ezen.massagemall.admin.utils.SearchCriteria;
 import com.ezen.massagemall.cart.CartService;
 import com.ezen.massagemall.cart.CartVO;
 import com.ezen.massagemall.user.UserService;
@@ -36,13 +37,14 @@ public class OrderController {
 	@Value("${com.ezen.upload.path}")
 	private String uploadPath;
 
-	@GetMapping("order_info")
+	// 장바구니에서 주문클릭 or 상품리스트에서 buy 버튼클릭
+	@GetMapping("/order_info")
 	public void order_info(CartVO vo, String type, HttpSession session, Model model) throws Exception {
 		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
 		vo.setMc_email(mc_email);
 		if (type.equals("buy"))
 			cartService.cart_add(vo);
-
+		// 구매정보 출력
 		List<Map<String, Object>> cartDetails = cartService.getCartDetailsByUserId(mc_email);
 		cartDetails.forEach(cartVO -> {
 			cartVO.put("pro_upfolder", cartVO.get("pro_upfolder").toString().replace("\\", "/"));
@@ -83,18 +85,35 @@ public class OrderController {
 		return "redirect:/order/order_result";
 	}
 
-	/*
-	 * 2025-01-17 17:14:26,832 ERROR [jdbc.sqltiming] 121.
-	 * PreparedStatement.execute() FAILED! insert into order_tbl (mc_email,
-	 * ord_name, ord_zipcode, ord_addr, ord_deaddr, ord_phone, ord_price,
-	 * ord_status)
-	 * values('audanseo15@gmail.com','명문대',NULL,NULL,NULL,'010-1234-1234',0,NULL)
-	 * {FAILED after 27 msec}
-	 */
-	@GetMapping("order_result")
+	int order_total_price;
+
+	// 주문결과
+	@GetMapping("/order_result")
 	public void order_result(Integer ord_code, Model model) throws Exception {
 
-		log.info("ord_code" + ord_code);
+		log.info("order_total_price" + order_total_price);
+		// 반드시 0으로초기화 새로운 구매시 총금액이 누적됨.
+		order_total_price = 0;
+		// log.info("ord_code" + ord_code);
+
+		// 주문결과(주문번호)
+		List<Map<String, Object>> order_info = orderService.getOrderInfoOrd_code(ord_code);
+
+		order_info.forEach(o_Info -> {
+			o_Info.put("pro_upfolder", o_Info.get("pro_upfolder").toString().replace("\\", "/"));
+			order_total_price += ((int) o_Info.get("dt_amount") * (int) o_Info.get("dt_price"));
+		});
+		log.info("총주문금액:" + order_total_price);
+
+		model.addAttribute("order_info", order_info);
+		model.addAttribute("order_total_price", order_total_price);
+	}
+
+	@GetMapping(value = { "/order_list" })
+	public void order_list(SearchCriteria cri, HttpSession session, Model model) throws Exception {
+		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
+
+		cri.setPerPageNum(2);
 	}
 
 	@GetMapping("/image_display")

@@ -59,7 +59,9 @@ public class KakaopayController {
 		// 결제 승인요청의 성공 응답파라미터로 aid를 확인
 		if (response.contains("aid")) {
 
+			// 주문 관련 작업
 		}
+
 		return "redirect:/order/order_result";
 	}
 

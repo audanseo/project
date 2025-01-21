@@ -123,6 +123,11 @@ public class UserController {
 		return "redirect:/";
 	}
 
+	@GetMapping("/mypage")
+	public void mypage() throws Exception {
+
+	}
+
 	// 비밀번호 변경
 	@GetMapping("/pwchange")
 	public void pwchange() throws Exception {

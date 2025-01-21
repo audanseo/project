@@ -97,6 +97,14 @@ layout:decorate="~{layouts/layout}">
 								<td>[[${#numbers.formatInteger(item.unitprice, 3, 'COMMA') + '원'}]]</td>
 							</tr>
 						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="6"  th:if="${cart_total_price !=null}" th:text="'총금액' + ${#numbers.formatInteger(cart_total_price, 3, 'COMMA') + '원'}"></td>
+							</tr>
+							<tr>
+								<td colspan="6"  th:unless= "${cart_total_price != null}" th:text="'장바구니가 비웠습니다.'"></td>
+							</tr>
+						</tfoot>
 					</table>
 				</form>
 			</div>
@@ -110,7 +118,6 @@ layout:decorate="~{layouts/layout}">
 		<div class="col-6" style="text-align: right;">
 			<button type="button" class="btn btn-success" id="btn_order_info">주문하기</button>
 			<button type="button" class="btn btn-info" id="btn_shopping">쇼핑하기</button>	
-			<span id="cart_total" th:text="|결제금액 :${#numbers.formatInteger(cart_total_price, 3, 'COMMA') + '원'}|"></span>
 		</div>
 	</div>
 </th:block>

@@ -6,9 +6,42 @@
 <insert id="order_insert" useGeneratedKeys="true" keyProperty="ord_code">
 	insert into 
 		order_tbl
-			(mc_email, ord_name, ord_zipcode, ord_addr, ord_deaddr, ord_phone, ord_price)
-	values(#{mc_email},#{ord_name},#{ord_zipcode},#{ord_addr},#{ord_deaddr},#{ord_phone},#{ord_price})
+	(mc_email, ord_name, ord_zipcode, ord_addr, ord_deaddr, ord_phone, ord_price)
+	values
+	(#{mc_email},#{ord_name},#{ord_zipcode},#{ord_addr},#{ord_deaddr},#{ord_phone},#{ord_price})
 
 </insert>
+<insert id="order_detail_insert" parameterType="map">
+	insert into 
+		ordetail_tbl
+	select 
+		#{ord_code}, c.pro_num , c.cart_amount , p.pro_price from cart_tbl c 
+	inner join 
+		product_tbl p
+	 on 
+	 	c.pro_num = p.pro_num	
+	 where 
+	 	c.mc_email = #{mc_email}
+</insert>
+
+<select id="getOrderInfoOrd_code" resultType="HashMap">
+	select 
+		ot.ord_code, pt.pro_name, pt.pro_upfolder, pt.pro_img, ot.dt_price ,ot.dt_amount, pt2.payment_status 
+	from 
+		ordetail_tbl ot 
+	inner join 
+		product_tbl pt 
+	on 
+		ot.pro_num = pt.pro_num 
+	inner join 
+		payment_tbl pt2
+	on 
+		pt2.ord_code = ot.ord_code
+	where 
+		ot.ord_code = #{ord_code}
+
+</select>
+
+
 
 </mapper>

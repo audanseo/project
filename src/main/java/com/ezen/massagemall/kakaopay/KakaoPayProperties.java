@@ -18,6 +18,6 @@ public class KakaoPayProperties {
 	@Value("${kakaopay.secretKey}")
 	private String secretKey;
 
-	@Value("{kakaopay.cid}")
+	@Value("${kakaopay.cid}")
 	private String cid;
 }

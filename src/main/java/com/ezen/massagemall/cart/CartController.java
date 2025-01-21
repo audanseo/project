@@ -56,6 +56,7 @@ public class CartController {
 		});
 		model.addAttribute("cart_list", cart_list);
 
+		// 장바구니 비우기작업에서 총금액이 null로 발생
 		model.addAttribute("cart_total_price", cartService.getCartTotalPriceByUserId(mc_email));
 	}
 

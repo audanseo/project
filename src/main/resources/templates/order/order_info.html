@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html html xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="script">
@@ -110,9 +110,9 @@ layout:decorate="~{layouts/layout}">
                         <input type="hidden" id="ord_addr" th:value="${userVO.mc_addr}">
                         <input type="hidden" id="ord_deaddr" th:value="${userVO.mc_deaddr}">
                         <!--전체금액-->
-                        <input type="hidden" id="order_price" th:value="${order_total_price}">
+                        <input type="hidden" name="ord_price" id="ord_price" th:value="${order_total_price}">
                         <!--결제방식-->
-                        <input type="hidden" id="p_method">
+                        <input type="hidden" name="p_method" id="p_method">
 
                         <input type="text" class="form-control" id="ord_name" th:value="${userVO.mc_name}">
                         </div>
