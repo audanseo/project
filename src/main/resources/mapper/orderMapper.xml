@@ -42,6 +42,52 @@
 
 </select>
 
+<select id="getOrderListByUser_id" resultType="HashMap">
+	select 
+		o.ord_code, o.ord_date, p.pro_upfolder, p.pro_img, p.pro_name, ot.pro_num, ot.dt_amount, ot.dt_price, pt.payment_status 
+	from 
+		order_tbl o 
+	inner join 
+		ordetail_tbl ot 
+	on 
+		o.ord_code = ot.ord_code 
+	inner join 
+		product_tbl p 
+	on 
+		p.pro_num = ot.pro_num 
+	inner join 
+		payment_tbl pt 
+	on 
+		ot.ord_code = pt.ord_code 
+	where 
+		o.mc_email = #{mc_email}
+	order by
+		o.ord_date desc
+	limit 
+		#{cri.pageStart},#{cri.perPageNum}
 
+</select>
+
+<select id="getOrderCountByUser_id" resultType="int">
+	select 
+		count(*)
+	from 
+		order_tbl o 
+	inner join 
+		ordetail_tbl ot 
+	on 
+		o.ord_code = ot.ord_code 
+	inner join 
+		product_tbl p 
+	on 
+		p.pro_num = ot.pro_num 
+	inner join 
+		payment_tbl pt 
+	on 
+		ot.ord_code = pt.ord_code 
+	where 
+		o.mc_email = #{mc_email}
+
+</select>
 
 </mapper>

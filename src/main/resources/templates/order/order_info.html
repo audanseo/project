@@ -3,7 +3,7 @@
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="script">
-    <script>
+    <script th:inline="javascript">
     $(document).ready(function(){
         //id="receive_info" 기본주소 클릭
         $("#receive_info").on("click", function(){
@@ -45,7 +45,7 @@ layout:decorate="~{layouts/layout}">
             }else if(pay_method == "kakaopay") {
                 
                 $.ajax({
-                    url : '/kakao/kakaopay',
+                    url : '/kakao/kakaoPay',
                     type: 'post',
                     data: { item_name : [[${item_name}]], quantity : [[${quantity}]], ord_price: [[${order_total_price}]], ord_name : $("#ord_name_2").val(), ord_zipcode : $("#sample2_postcode").val(), ord_addr : $("#sample2_address").val(), ord_deaddr : $("#sample2_detailAddress").val(), ord_phone : $("#ord_phone_2").val(), ord_mail : $("#ord_mail_2").val()},
                     success : function(response) {

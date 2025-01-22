@@ -17,4 +17,7 @@ public interface OrderMapper {
 
 	List<Map<String, Object>> getOrderListByUser_id(@Param("mc_email") String mc_email,
 			@Param("cri") SearchCriteria cri);
+
+	int getOrderCountByUser_id(String mc_email);
+
 }

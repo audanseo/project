@@ -24,8 +24,10 @@ layout:decorate="~{layouts/layout}">
                 </tr>
             </thead>
                 <tbody>
-                    <tr th:each= "item : ${order_info}">
-                    <td th:text="${item.ord_code}"></td>
+                    <tr th:each= "item : ${order_list}">
+                    <td>
+                        [[${#temporals.format(item.ord_date, 'yyyy-MM-dd')}]] <br><br> [[${item.ord_code}]]
+                    </td>
                     <td>
                     <img style="width: 100px;height: 100px;" th:src="${'/order/image_display?dateFolderName=' + item.pro_upfolder + '&fileName=s_' + item.pro_img}">
                     </td>
@@ -36,12 +38,29 @@ layout:decorate="~{layouts/layout}">
                     <td th:text="${item.payment_status}"></td> 
                     </tr>
                 </tbody>
-            <tfoot>
-                <tr>
-                <td style="text-align: center;" colspan="8" th:text="'총금액' + ${#numbers.formatInteger(order_total_price, 3, 'COMMA') + '원'}"></td>
-                </tr>
-            </tfoot>
             </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+        <!-- /.card-body -->
+			<div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    <th:block th:if= "${pageMaker.prev}">
+                    <li class="page-item"><a class="page-link" th:href="|/order/order_list${pageMaker.makeSearch(pageMaker.startPage-1)}|">«</a></li>
+                    </th:block>
+
+                    <th:block th:each= "num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+                    <li class="page-item" th:classappend="${pageMaker.cri.page == num ? 'active' : ''}">
+                        <a class="page-link" th:href="|/order/order_list${pageMaker.makeSearch(num)}|" th:text="${num}"></a></li>
+                    </th:block>
+
+                    <th:block th:if= "${pageMaker.next}">
+                    <li class="page-item"><a class="page-link" th:href="|/order/order_list${pageMaker.makeSearch(pageMaker.endPage+1)}|">»</a></li>
+                    </th:block>
+                </ul>
+            </div>
         </div>
     </div>
 </th:block>

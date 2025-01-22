@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezen.massagemall.admin.utils.FileUtils;
+import com.ezen.massagemall.admin.utils.PageMaker;
 import com.ezen.massagemall.admin.utils.SearchCriteria;
 import com.ezen.massagemall.cart.CartService;
 import com.ezen.massagemall.cart.CartVO;
@@ -111,9 +112,26 @@ public class OrderController {
 
 	@GetMapping(value = { "/order_list" })
 	public void order_list(SearchCriteria cri, HttpSession session, Model model) throws Exception {
+
+		// 세션로그인
 		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
 
 		cri.setPerPageNum(2);
+
+		List<Map<String, Object>> order_list = orderService.getOrderListByUser_id(mc_email, cri);
+
+		order_list.forEach(o_info -> {
+			o_info.put("pro_upfolder", o_info.get("pro_upfolder").toString().replace("\\", "/"));
+		});
+
+		model.addAttribute("order_list", order_list);
+
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(orderService.getOrderCountByUser_id(mc_email));
+
+		model.addAttribute("pageMaker", pageMaker);
+
 	}
 
 	@GetMapping("/image_display")

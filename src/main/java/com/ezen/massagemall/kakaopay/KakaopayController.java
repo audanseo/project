@@ -26,15 +26,21 @@ public class KakaopayController {
 
 	private final KakaopayService kakaopayService;
 	private final OrderService orderService;
+
+	private OrderVO order_info;
+	private String mc_email;
 	private int order_total_price;
 
 	// 카카오페이 api에서 post사용을 원함
-	@PostMapping("/kakaopay")
+	@PostMapping("/kakaoPay")
 	public ResponseEntity<ReadyResponse> kakaopay(OrderVO vo, String item_name, Integer quantity, HttpSession session) {
 
 		String mc_email = ((UserVO) session.getAttribute("login_auth")).getMc_email();
 		vo.setMc_email(mc_email);
 
+		log.info("주문정보" + vo);
+
+		this.order_info = vo;
 		this.order_total_price = vo.getOrd_price();
 		ResponseEntity<ReadyResponse> entity = null;
 
@@ -60,7 +66,10 @@ public class KakaopayController {
 		if (response.contains("aid")) {
 
 			// 주문 관련 작업
+			orderService.order_process(this.order_info, mc_email, "카카오페이");
 		}
+
+		rttr.addAttribute("ord_code", order_info.getOrd_code());
 
 		return "redirect:/order/order_result";
 	}

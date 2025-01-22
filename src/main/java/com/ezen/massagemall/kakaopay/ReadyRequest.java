@@ -18,9 +18,9 @@ public class ReadyRequest {
 	private String partner_order_id; // 가맹점 주문번호
 	private String partner_user_id; // 가맹점 회원id
 	private String item_name; // 상품명
-	private Integer quantity; // 상품수량
-	private Integer total_amount; // 상품총액
-	private Integer tax_free_amount; // 상품비과세금액
+	private int quantity; // 상품수량
+	private int total_amount; // 상품총액
+	private int tax_free_amount; // 상품비과세금액
 	private String approval_url;
 	private String cancel_url;
 	private String fail_url;

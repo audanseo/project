@@ -44,8 +44,12 @@ public class KakaopayService {
 	public ReadyResponse ready(String partner_order_id, String partner_user_id, String item_name, Integer quantity,
 			Integer total_amount, Integer tax_free_amount) {
 
+		log.info("에러 찾기" + tax_free_amount);
+		// Request 헤더
 		HttpHeaders headers = getHttpHeaders();
 
+		log.info("헤더" + headers.toString());
+		// Request param
 		ReadyRequest readyRequest = ReadyRequest.builder().cid(cid).partner_order_id(partner_order_id)
 				.partner_user_id(partner_user_id).item_name(item_name).quantity(quantity).total_amount(total_amount)
 				.tax_free_amount(tax_free_amount).approval_url(approval).cancel_url(cancel).fail_url(fail).build();
@@ -69,8 +73,11 @@ public class KakaopayService {
 
 	// 결제승인요청-approve
 	public String approve(String pg_token) {
+
+		// Request 헤더
 		HttpHeaders headers = getHttpHeaders();
 
+		// Request param
 		ApproveRequest approveRequest = ApproveRequest.builder().cid(cid).tid(tid).partner_order_id(partner_order_id)
 				.partner_user_id(partner_user_id).pg_token(pg_token).build();
 

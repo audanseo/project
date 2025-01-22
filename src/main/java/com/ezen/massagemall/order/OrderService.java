@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ezen.massagemall.admin.utils.SearchCriteria;
 import com.ezen.massagemall.cart.CartMapper;
 import com.ezen.massagemall.payment.PaymentMapper;
 import com.ezen.massagemall.payment.PaymentVO;
@@ -58,5 +59,13 @@ public class OrderService {
 	// 실시간 결제에 따른 주문내역
 	public List<Map<String, Object>> getOrderInfoOrd_code(Integer ord_code) {
 		return orderMapper.getOrderInfoOrd_code(ord_code);
+	}
+
+	public List<Map<String, Object>> getOrderListByUser_id(String mc_email, SearchCriteria cri) {
+		return orderMapper.getOrderListByUser_id(mc_email, cri);
+	}
+
+	public int getOrderCountByUser_id(String mc_email) {
+		return orderMapper.getOrderCountByUser_id(mc_email);
 	}
 }
