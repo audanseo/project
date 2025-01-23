@@ -15,7 +15,9 @@
 	insert into 
 		ordetail_tbl
 	select 
-		#{ord_code}, c.pro_num , c.cart_amount , p.pro_price from cart_tbl c 
+		#{ord_code}, c.pro_num , c.cart_amount , p.pro_price 
+	from 
+		cart_tbl c 
 	inner join 
 		product_tbl p
 	 on 

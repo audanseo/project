@@ -82,6 +82,9 @@ layout:decorate="~{layouts/layout}">
                             <div class="mt-1">수량 <input type="number" style="width: 48px;" name="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></div>
                             <div class="d-flex justify-content-between mt-4">
                                 <div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
+                                    <div style="padding-right: 10px;">
+                                        <small class="text-body-secondary">상품후기 : <span id="review_count" th:text="${productVO.pro_review}"></span></small>
+                                    </div>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" name="btn_cart_add" th:data-pro_num="${productVO.pro_num}">장바구니</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" name="btn_buy_add" th:data-pro_num="${productVO.pro_num}">구매</button>
                                 </div>  

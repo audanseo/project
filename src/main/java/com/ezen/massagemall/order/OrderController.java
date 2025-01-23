@@ -82,6 +82,7 @@ public class OrderController {
 		orderService.order_process(vo, mc_email, p_method_info);
 
 		rttr.addAttribute("ord_code", vo.getOrd_code());
+		rttr.addAttribute("ord_mail", vo.getMc_email());
 
 		return "redirect:/order/order_result";
 	}
@@ -90,7 +91,7 @@ public class OrderController {
 
 	// 주문결과
 	@GetMapping("/order_result")
-	public void order_result(Integer ord_code, Model model) throws Exception {
+	public void order_result(Integer ord_code, String ord_mail, Model model) throws Exception {
 
 		log.info("order_total_price" + order_total_price);
 		// 반드시 0으로초기화 새로운 구매시 총금액이 누적됨.

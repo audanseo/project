@@ -5,14 +5,49 @@ layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <style>
-        #pro_img{
-            max-width: 100%;
-            height: auto;
+        /*평점 기본효과*/
+        p#star_rev_rate a.rev_rate {
+            font-size: 22px;
+            text-decoration: none;
+            color: lightgray;
+        }
+        /*평점 클릭효과*/
+        p#star_rev_rate a.rev_rate.on {
+            color: red;
         }
     </style>
+
 </th:block>
 <th:block layout:fragment="script">
 <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+<script id="templateReview" type="text/x-handlebars-template">
+<script th:inline="javascript"> 
+//핸들바 템플릿을 사용하기 위해 사용
+Handlebars.registerHelper("displayStar", function(rating){
+    let star = "";
+    switch(rating) {
+        case 1:
+            star = "★☆☆☆☆";
+            break;
+        case 2:
+            star = "★★☆☆☆";
+            break;
+        case 3:
+            star = "★★★☆☆";
+            break;
+        case 4:
+            star = "★★★★☆";
+            break;
+        case 5:
+            star = "★★★★★";
+            break;
+    }
+    return star;
+});
+
+</script>
+
 <script>
     $(function(){
         $("#tabs").tabs();
@@ -38,14 +73,33 @@ layout:decorate="~{layouts/layout}">
             });
         });
 
-    });
+        //id="btn_buy_add"
+        $("#btn_buy_add").on("click", function(){
+            let cart_amount = $("#cart_amount").val();
+            let url = `/order/order_info?pro_num=[[${productVO.pro_num}]]&cart_amount=${cart_amount}&type=buy`;
+        
+            location.href=url;
+        
+        });
+
+        //평점 클릭 id="star_rev_rate"
+        $("#star_rev_rate a.rev_rate").on("click", function(e){
+            e.preventDefault(); //a태그효과 사라짐
+            $(this).parent().children().removeClass("on");
+
+            $(this).addClass("on").prevAll("a").addClass("on");
+        });
+
+    });//ready end
+
+
 
 </script>
 </th:block>
 <th:block layout:fragment="content">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         <div class="col-6">
-            <img style="width: 100%; height: auto;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+            <img style="width: 100%; height: auto;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
         </div>
         <div class="col-6" style="position: relative; padding-bottom: 50px;">
             <h4 th:text="${productVO.pro_name}"></h4>
@@ -53,8 +107,11 @@ layout:decorate="~{layouts/layout}">
             <div style="display: flex;"><h4>판매가격 :</h4><h4>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</h4> </div>
             <div style="display: flex;"><h4>수량 : </h4><input type="number" style="width: 48px;" id="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></div>
             <div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
+                <div style="padding-right: 10px;">
+                <small class="text-body-secondary">상품후기 : <span id="review_count" th:text="${productVO.pro_review}"></span></small>
+                </div>
                 <button type="button" class="btn btn-sm btn-outline-secondary"  id="btn_cart_add">장바구니</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary">구매</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn_buy_add" >구매</button>
             </div>
         </div>
 
@@ -72,6 +129,23 @@ layout:decorate="~{layouts/layout}">
             </div>
             <div id="tabs-2">
                 <p>리뷰</p>
+                <div class="row">
+                <div class="col-9">
+                    <label for="rev_content"></label>
+                    <textarea class="form-control" id="rev_content"></textarea>
+                </div>
+                <div class="col-3">
+                        <p id="star_rev_rate">
+                            <a class="rev_rate" href="#">★</a>
+                            <a class="rev_rate" href="#">★</a>
+                            <a class="rev_rate" href="#">★</a>
+                            <a class="rev_rate" href="#">★</a>
+                            <a class="rev_rate" href="#">★</a>
+                            평점
+                        </p>
+                    <button class="btn btn-block btn-outline-info btn-sm" id="btn_rev_save" th:data-pro_num="${productVO.pro_num}">리뷰작성</button>
+                </div>
+            </div>
             </div>
             <div id="tabs-3">
                 <p>QnA</p>

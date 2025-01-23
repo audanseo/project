@@ -34,12 +34,12 @@ public class OrderService {
 
 		// 2)주문 상세테이블
 
-		orderMapper.order_detail_insert(vo.getOrd_code(), mc_email);
+		orderMapper.order_detail_insert(vo.getOrd_code(), vo.getMc_email());
 		// 3)결제 테이블
 
 		PaymentVO p_vo = new PaymentVO();
 		p_vo.setOrd_code(vo.getOrd_code());
-		p_vo.setMc_email(mc_email);
+		p_vo.setMc_email(vo.getMc_email());
 
 		p_vo.setPayment_method(p_method); // 카카오페이
 		p_vo.setPayment_price(vo.getOrd_price()); // 총구매 금액
@@ -53,7 +53,7 @@ public class OrderService {
 		paymentMapper.payment_insert(p_vo);
 
 		// 4)장바구니 테이블
-		cartMapper.cart_empty(mc_email);
+		cartMapper.cart_empty(vo.getMc_email());
 	}
 
 	// 실시간 결제에 따른 주문내역
