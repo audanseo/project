@@ -17,11 +17,12 @@ layout:decorate="~{layouts/layout}">
 
 
 <th:block layout:fragment="content">
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" style="margin-top: 50px;">
+        <div class="card card-info">
         <div style="max-width: 600px;">
             <form action="/user/login" method="post">
                 <h1 class="mt-3 mb-4 text-center ">로그인</h1>
-            
+                <div class="card-header">
                 <div class="col-sm-12 mb-3 text-center">
                     <label for="mc_email" class="form-label">이메일</label>
                     <input type="email" class="form-control" id="mc_email" name="mc_email" placeholder="example@naver.com">
@@ -30,17 +31,14 @@ layout:decorate="~{layouts/layout}">
                     <label for="mc_password" class="form-label">비밀번호</label>
                     <input type="password" class="form-control" id="mc_password" name="mc_password" placeholder="비밀번호">
                 </div>
-            
-                <div class="form-check text-start my-3">
-                    <label class="form-check-label" for="flexCheckDefault">기억하기</label>
-                    <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-                </div>
                 <div class="mb-3 text-center">
                 <button class="btn btn-info" type="submit">로그인</button>
                 <a href="/user/lostpass" class="btn btn-primary">이메일/비밀번호 찾기</a>
                 </div>
+            </div>
             </form>
         </div>
+    </div>
     </div>
 </th:block>
 

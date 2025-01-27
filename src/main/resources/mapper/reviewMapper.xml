@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ezen.massagemall.review.ReviewMapper">
+	<select id="rev_list" resultMap="ReviewResultMap">
+		select 
+			r.rev_code, r.pro_num, r.rev_content, r.rev_rate, r.rev_date, m.mc_nickname 
+		from 
+			review_tbl r
+		inner join 
+			mc_tbl m
+		on 
+			m.mc_email = r.mc_email
+		where 
+			r.pro_num = #{pro_num}
+		order by 
+			rev_date desc
+		limit 
+			#{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	<resultMap type="com.ezen.massagemall.review.ReviewVO" id="ReviewResultMap">
+		<id property="rev_code" column="rev_code"/>
+		<result property="mc_email" column="mc_email"/>
+		<result property="mc_nickname" column="mc_nickname"/>
+		<result property="pro_num" column="pro_num"/>
+		<result property="rev_content" column="rev_content"/>
+		<result property="rev_rate" column="rev_rate"/>
+		<result property="rev_date" column="rev_date"/>
+	</resultMap>
+	
+	<select id="getCountReviewByPro_num" resultType="int">
+		select
+			count(*)
+		from
+			review_tbl
+		where
+			pro_num=#{pro_num}
+	
+	</select>
+	<insert id="review_save">
+		insert into
+			review_tbl(mc_email, pro_num, rev_content, rev_rate)
+		values
+			(#{mc_email},#{pro_num},#{rev_content},#{rev_rate})
+		
+	</insert>
+
 
 </mapper>

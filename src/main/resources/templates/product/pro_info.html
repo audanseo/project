@@ -15,13 +15,117 @@ layout:decorate="~{layouts/layout}">
         p#star_rev_rate a.rev_rate.on {
             color: red;
         }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .product-details {
+            display: flex;
+            margin-top: 50px;
+        }
+
+        .product-image {
+            width: 50%;
+            padding-right: 20px;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .product-info {
+            width: 50%;
+            position: relative;
+            padding-bottom: 50px;
+        }
+
+        .product-info h4 {
+            margin-bottom: 10px;
+        }
+
+        .product-info .price-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .product-info .price-info h4:first-child {
+            margin-right: 10px;
+        }
+
+        #cart_amount {
+            width: 60px;
+            padding: 5px;
+        }
+
+        .btn-group {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        #tabs {
+            margin-top: 30px;
+        }
+
+        #tabs .ui-tabs-nav {
+            background: #f4f4f4;
+            border: none;
+            border-radius: 0;
+        }
+
+        #tabs .ui-tabs-nav li {
+            margin: 0;
+        }
+
+        #tabs .ui-tabs-nav li a {
+            padding: 10px 15px;
+        }
+
+        #tabs .ui-tabs-panel {
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+
+        /* Review Section */
+        #rev_content {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        #star_rev_rate {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #reviewTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #reviewTable td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
     </style>
 
 </th:block>
 <th:block layout:fragment="script">
 <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-<script id="templateReview" type="text/x-handlebars-template">
+<script type="text/x-handlebars-template">
 <script th:inline="javascript"> 
 //핸들바 템플릿을 사용하기 위해 사용
 Handlebars.registerHelper("displayStar", function(rating){
@@ -45,7 +149,22 @@ Handlebars.registerHelper("displayStar", function(rating){
     }
     return star;
 });
-
+</script>
+<script id="templateReview" type="text/x-handlebars-template">
+    <table id="reviewTable">
+        <tbody>
+            {{#each .}}
+            <tr>
+                <td>{{rev_code}}</td>
+                <td>{{mc_email}}</td>
+                <td>{{rev_content}}</td>
+                <td>{{displayStar rev_rate}}</td>
+                <td>{{convertDate rev_date}}</td>
+                <td>{{authControlView mc_email rev_code}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
 </script>
 
 <script>
@@ -90,16 +209,52 @@ Handlebars.registerHelper("displayStar", function(rating){
             $(this).addClass("on").prevAll("a").addClass("on");
         });
 
+        //id="btn_rev_save" 리뷰등록
+        $("#btn_rev_save").on("click", function(){
+            let pro_num = $(this).data("pro_num");
+            let rev_content = $("#rev_content").val();
+            let rev_rate = 0;
+
+            $("#star_rev_rate a.rev_rate").each(function(){
+                if(($this).attr("class")== "rev_rate on") {
+                    rev_rate += 1;
+                }
+            });
+
+            if(rev_content == "") {
+                alert("후기를 작성해주세요");
+                return;
+            }
+
+            if(rev_rate == 0) {
+                alert("평점을 선택하세요");
+                return;
+            }
+
+            let review_data = {pro_num : pro_num, rev_content : rev_content, rev_rate : rev_rate};
+
+            $.ajax({
+                url : '/review/review_save',
+                type : 'post',
+                headers : {
+                    "Content-Type" : "application/json", "X-HTTP-Method-Overrid" : "POST"
+                },
+                data : JSON.stringify(review_data),
+                dataType : 'text',
+                success : function(review_count) {
+
+                }
+            });
+        });
+
     });//ready end
-
-
 
 </script>
 </th:block>
 <th:block layout:fragment="content">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    <div class="row row-cols-1 row-cols-sm-2" style="margin-top: 50px;">
         <div class="col-6">
-            <img style="width: 100%; height: auto;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+            <img style="width: 50%; height: 100%;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
         </div>
         <div class="col-6" style="position: relative; padding-bottom: 50px;">
             <h4 th:text="${productVO.pro_name}"></h4>
@@ -146,6 +301,12 @@ Handlebars.registerHelper("displayStar", function(rating){
                     <button class="btn btn-block btn-outline-info btn-sm" id="btn_rev_save" th:data-pro_num="${productVO.pro_num}">리뷰작성</button>
                 </div>
             </div>
+            </div>
+            <div class="row">
+                <div class="col" id="reviewList"></div>
+            </div>
+            <div class="row">
+                <div class="col" id="reviewPaging"></div>
             </div>
             <div id="tabs-3">
                 <p>QnA</p>

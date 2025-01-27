@@ -4,6 +4,50 @@
 xmlns:th="http://www.thymeleaf.org" 
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
 layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.carousel-inner {
+            height: 500px;
+            background-color: #f8f9fa;
+        }
+
+        .carousel-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 20px;
+        }
+
+        .carousel-indicators {
+            bottom: 20px;
+        }
+
+        .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+
+        #myCarousel {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+	</style>
+
+</th:block>
 
 <th:block layout:fragment="content">
 
@@ -18,16 +62,13 @@ layout:decorate="~{layouts/layout}">
 		</div>
 		<div class="carousel-inner">
 			<div class="carousel-item active">
-				<svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
-					<rect width="100%" height="100%" fill="var(--bs-secondary-color)" /></svg>
+				<img src="/images/massagechair1.JPG" class="d-block w-100 h-100">
 			</div>
 			<div class="carousel-item">
-				<svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
-					<rect width="100%" height="100%" fill="var(--bs-secondary-color)" /></svg>
+				<img src="/images/massagechair2.JPG" class="d-block w-100 h-100">
 			</div>
 			<div class="carousel-item">
-				<svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
-					<rect width="100%" height="100%" fill="var(--bs-secondary-color)" /></svg>
+				<img src="/images/massagechair3.JPG" class="d-block w-100 h-100">
 			</div>
 		</div>
 		<button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">

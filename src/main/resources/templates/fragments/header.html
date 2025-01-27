@@ -2,6 +2,55 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="header">
 	<header>
+		<style>
+			.navbar {
+			box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #fff;
+  transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #17a2b8;
+}
+
+.nav-link {
+  color: #f8f9fa;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #17a2b8;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 10px;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+color: #17a2b8;
+}
+
+.justify-content-end {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+  }
+  
+  .justify-content-end {
+    margin-left: 0;
+    justify-content: center;
+  }
+}
+		</style>
 		<!-- Fixed navbar -->
 		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 			<div class="container-fluid">
