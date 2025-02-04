@@ -1,30 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ezen.massagemall.review.ReviewMapper">
+
 	<select id="rev_list" resultMap="ReviewResultMap">
 		select 
-			r.rev_code, r.pro_num, r.rev_content, r.rev_rate, r.rev_date, m.mc_nickname 
+			r.rev_code, r.mc_email, m.mc_nickname, r.pro_num, r.rev_content, r.rev_rate, r.rev_date,
+       		rr.reply_id, rr.manager_id, rr.reply_text, rr.reply_date
 		from 
 			review_tbl r
-		inner join 
-			mc_tbl m
+		left outer join 
+			review_replies_tbl rr 
 		on 
-			m.mc_email = r.mc_email
+			r.rev_code = rr.rev_code
+		left outer join 
+			mc_tbl m 
+		on 
+			r.mc_email = m.mc_email
 		where 
-			r.pro_num = #{pro_num}
+			pro_num = #{pro_num}
 		order by 
-			rev_date desc
+			r.rev_date desc
 		limit 
 			#{cri.pageStart}, #{cri.perPageNum}
 	</select>
 	<resultMap type="com.ezen.massagemall.review.ReviewVO" id="ReviewResultMap">
 		<id property="rev_code" column="rev_code"/>
 		<result property="mc_email" column="mc_email"/>
-		<result property="mc_nickname" column="mc_nickname"/>
 		<result property="pro_num" column="pro_num"/>
 		<result property="rev_content" column="rev_content"/>
 		<result property="rev_rate" column="rev_rate"/>
 		<result property="rev_date" column="rev_date"/>
+		<collection property="replies" ofType="com.ezen.massagemall.review.ReviewReply">
+		<id property="reply_id" column="reply_id"/>
+		<result property="manager_id" column="manager_id" />
+		<result property="reply_text" column="reply_text"/>
+		<result property="reply_date" column="reply_date"/>
+		</collection>
 	</resultMap>
 	
 	<select id="getCountReviewByPro_num" resultType="int">
@@ -43,6 +54,34 @@
 			(#{mc_email},#{pro_num},#{rev_content},#{rev_rate})
 		
 	</insert>
+	
+	
+	<select id="review_info" resultType="com.ezen.massagemall.review.ReviewVO">
+		select
+			rev_code, mc_email, pro_num, rev_content, rev_rate, rev_date
+		from
+			review_tbl
+		where
+			rev_code = #{rev_code}
+	
+	</select>
+	
+	<update id="review_modify">
+		update
+			review_tbl
+		set
+			rev_rate = #{rev_rate}, rev_content = #{rev_content}, rev_date = now()
+		where
+			rev_code = #{rev_code}
+	</update>
+
+	<delete id="review_delete">
+		delete from 
+			review_tbl 
+		where 
+			rev_code = #{rev_code}
+	
+	</delete>
 
 
 </mapper>

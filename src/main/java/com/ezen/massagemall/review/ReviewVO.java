@@ -1,6 +1,7 @@
 package com.ezen.massagemall.review;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,4 +19,6 @@ public class ReviewVO {
 	private String rev_content;
 	private int rev_rate;
 	private LocalDateTime rev_date;
+	private String rev_nickname;
+	private List<ReviewReply> replies;
 }

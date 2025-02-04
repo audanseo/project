@@ -125,31 +125,7 @@ layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="script">
 <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-<script type="text/x-handlebars-template">
-<script th:inline="javascript"> 
-//핸들바 템플릿을 사용하기 위해 사용
-Handlebars.registerHelper("displayStar", function(rating){
-    let star = "";
-    switch(rating) {
-        case 1:
-            star = "★☆☆☆☆";
-            break;
-        case 2:
-            star = "★★☆☆☆";
-            break;
-        case 3:
-            star = "★★★☆☆";
-            break;
-        case 4:
-            star = "★★★★☆";
-            break;
-        case 5:
-            star = "★★★★★";
-            break;
-    }
-    return star;
-});
-</script>
+
 <script id="templateReview" type="text/x-handlebars-template">
     <table id="reviewTable">
         <tbody>
@@ -160,11 +136,85 @@ Handlebars.registerHelper("displayStar", function(rating){
                 <td>{{rev_content}}</td>
                 <td>{{displayStar rev_rate}}</td>
                 <td>{{convertDate rev_date}}</td>
-                <td>{{authControlView mc_email rev_code}}</td>
+                <td>
+                    {{authControlView mc_email rev_code}}
+                </td>
             </tr>
+            {{#if replies.length}}
+            {{#each replies}}
+            <tr>
+                <td colspan="6">[관리자] 답변글 : {{reply_text}} 작성일 : {{convertDate reply_date}}</td>
+            </tr>
+            {{/each}}
+            {{/if}}
             {{/each}}
         </tbody>
     </table>
+</script>
+<!-- 자바스크립트에서 타임리프 문법을 사용할 때 아래와 같이 작성한다. -->
+<script th:inline="javascript">
+    // 핸들바 템플릿에서 사용자정의 함수 : 후기작성시간 포맷(형식) 2025/01/06 11:55:30
+    Handlebars.registerHelper("convertDate", function(reviewDate) {
+        const date = new Date(reviewDate);
+
+        let month = (date.getMonth()+1 < 10 ? "0" + (date.getMonth()+1) : date.getMonth()+1);
+        let day = (date.getDate() < 10 ? "0" + (date.getDate()) : date.getDate());
+        let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+        let minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        let second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+        return date.getFullYear() + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + second;
+    });
+
+    Handlebars.registerHelper("authControlView", function(mc_email, rev_code){
+        let userVO = [[${session.login_auth}]];
+        let loginId = "";
+
+        if(userVO !== null) {
+            loginId = [[${session.login_auth == null? '' : session.login_auth.mc_email}]];
+        }
+
+        let str = "";
+        //사용자가 로그인상태이고 로그인아이디와 후기작성자가 일치한다면
+        if(userVO != null && loginId == mc_email) {
+            str += `<button type="button" name="delete" class="btn btn-outline-danger btn-sm" data-rev_code="${rev_code}">삭제</button>`;
+            str += `<button type="button" name="edit" class="btn btn-outline-info btn-sm" data-rev_code="${rev_code}">수정</button>`;
+            
+            return new Handlebars.SafeString(str);
+        }else{
+            return str;
+        }
+    });
+    Handlebars.registerHelper("displayStar", function(rating){
+    let star = "";
+        switch(rating) {
+            case 1:
+                star = "★☆☆☆☆";
+                break;
+            case 2:
+                star = "★★☆☆☆";
+                break;
+            case 3:
+                star = "★★★☆☆";
+                break;
+            case 4:
+                star = "★★★★☆";
+                break;
+            case 5:
+                star = "★★★★★";
+                break;
+        }
+        return star;
+    });
+    //댓글 목록출력함수 : 핸들바 템플릿
+    function fn_displayReviewData(reviewData, target, template) {
+        console.log(template);
+
+        let templateObj = Handlebars.compile(template.html());
+        let reviewHtml = templateObj(reviewData);
+        target.empty();
+        target.append(reviewHtml);
+    }
+
 </script>
 
 <script>
@@ -201,6 +251,69 @@ Handlebars.registerHelper("displayStar", function(rating){
         
         });
 
+        //상품 후기 요청작업
+        let pro_num = [[${productVO.pro_num}]];
+        let reviewPage = 1;
+
+        let url = "/review/rev_list/" + pro_num + "/" + reviewPage;
+
+        getPage(url);
+
+        function getPage(url) {
+            $("#rev_content").val("");
+            $("#star_rev_rate a.rev_rate").removeClass("on");
+
+            $.getJSON(url, function(data){
+                fn_displayReviewData(data.rev_list, $("#reviewList"), $("#templateReview"));
+                fn_displayReviewPaging(data.pageMaker, $("#reviewPaging"));
+            });
+        }
+
+        //페이징출력함수
+        function fn_displayReviewPaging(pageData, target) {
+
+            console.log(pageData);
+
+            let pageStr = '<nav aria-label="Page navigation example">';
+                pageStr += '<ul class="pagination">';
+            
+            if(pageData.prev) {
+                pageStr += '<li class="page-item"><a class="page-link" href="' + (pageData.startPage -1)  + '">&laquo;</a></li>';
+            }
+
+            for(let i= pageData.startPage; i <= pageData.endPage; i++) {
+                let curPageClass = (pageData.cri.page == i) ? 'active' : '';
+                pageStr += '<li class="page-item ' + curPageClass + '"><a class="page-link" href="' + i + '">' + i + '</a></li>';
+            }
+
+            if(pageData.next) {
+                pageStr += '<li class="page-item"><a class="page-link" href="' + (pageData.endPage + 1) + '">&raquo;</a></li>';
+            }
+
+            pageStr += '</ul>';
+            pageStr += '</nav>';
+
+            console.log(pageStr);
+
+            target.empty();
+            target.append(pageStr);
+        }
+
+        // 페이지 번호 클릭설정  1	2	3	4	5 next
+    $("div#reviewPaging").on("click", "li a", function(e) {
+        e.preventDefault(); // a태그의 링크기능을 제거.
+        // $(this) : 선택한 a태그를 참조.
+        reviewPage = $(this).attr("href");  // 페이지번호 읽기.
+
+        //console.log("선택한 페이지: ", replyPage); // 3
+
+        //console.log("url", url); //  /replies/pages/3510/1
+
+        url = "/review/rev_list/" + pro_num + "/" + reviewPage;
+
+        getPage(url);
+    });
+
         //평점 클릭 id="star_rev_rate"
         $("#star_rev_rate a.rev_rate").on("click", function(e){
             e.preventDefault(); //a태그효과 사라짐
@@ -216,7 +329,9 @@ Handlebars.registerHelper("displayStar", function(rating){
             let rev_rate = 0;
 
             $("#star_rev_rate a.rev_rate").each(function(){
-                if(($this).attr("class")== "rev_rate on") {
+                //console.log($(this))
+
+                if($(this).attr("class")== "rev_rate on") {
                     rev_rate += 1;
                 }
             });
@@ -242,7 +357,31 @@ Handlebars.registerHelper("displayStar", function(rating){
                 data : JSON.stringify(review_data),
                 dataType : 'text',
                 success : function(review_count) {
+                    if(review_count >0) {
+                        alert("상품후기 등록됨");
 
+                        // 리뷰카운트 보여주기
+                        $("#review_count").html(review_count);
+                        reviewPage = 1;
+                        getPage(url);
+                    }
+                }
+            });
+        });
+
+        //수정버튼
+        $("#reviewList").on("click", "button[name='edit']", function() {
+            let rev_code = $(this).data("rev_code");
+
+            let cur_tr = $(this).parent().parent();
+            cur_tr.find("td").remove();
+
+            $.ajax({
+                url : '/review/review_info/' + rev_code,
+                type : 'get',
+                dataType : 'json',
+                success : function(result) {
+                    console.log(result);
                 }
             });
         });
@@ -254,7 +393,7 @@ Handlebars.registerHelper("displayStar", function(rating){
 <th:block layout:fragment="content">
     <div class="row row-cols-1 row-cols-sm-2" style="margin-top: 50px;">
         <div class="col-6">
-            <img style="width: 50%; height: 100%;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+            <img style="width: 70%; height: 100%;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
         </div>
         <div class="col-6" style="position: relative; padding-bottom: 50px;">
             <h4 th:text="${productVO.pro_name}"></h4>
@@ -300,14 +439,15 @@ Handlebars.registerHelper("displayStar", function(rating){
                         </p>
                     <button class="btn btn-block btn-outline-info btn-sm" id="btn_rev_save" th:data-pro_num="${productVO.pro_num}">리뷰작성</button>
                 </div>
+                <div class="row">
+                    <div class="col" id="reviewList"></div>
+                </div>
+                <div class="row">
+                    <div class="col" id="reviewPaging"></div>
+                </div>
             </div>
             </div>
-            <div class="row">
-                <div class="col" id="reviewList"></div>
-            </div>
-            <div class="row">
-                <div class="col" id="reviewPaging"></div>
-            </div>
+            
             <div id="tabs-3">
                 <p>QnA</p>
             </div>

@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,7 +73,39 @@ public class ReviewController {
 		ResponseEntity<String> entity = null;
 		// 상품 후기 등록
 		reviewService.review_save(vo);
+		// 상품 후기 카운트 읽어오는 작업.
+		int review_count = productService.review_count_pro_info(vo.getPro_num());
 
+		entity = new ResponseEntity<String>(String.valueOf(review_count), HttpStatus.OK);
+
+		return entity;
+	}
+
+	@GetMapping(value = "/review_info/{rev_code}")
+	public ResponseEntity<ReviewVO> review_info(@PathVariable("rev_code") Integer rev_code) throws Exception {
+		ResponseEntity<ReviewVO> entity = null;
+
+		entity = new ResponseEntity<ReviewVO>(reviewService.review_info(rev_code), HttpStatus.OK);
+
+		return entity;
+	}
+
+	@PutMapping("/review_modify")
+	public ResponseEntity<String> review_modify(@RequestBody ReviewVO vo) throws Exception {
+		ResponseEntity<String> entity = null;
+
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+
+		return entity;
+	}
+
+	@DeleteMapping("/review_delete/{rev_code}")
+	public ResponseEntity<String> review_delete(@PathVariable("rev_code") Integer rev_code) throws Exception {
+		ResponseEntity<String> entity = null;
+
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+
+		reviewService.review_delete(rev_code);
 		return entity;
 	}
 }
