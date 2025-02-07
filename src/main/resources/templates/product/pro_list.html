@@ -2,78 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 layout:decorate="~{layouts/layout}">
-<th:block layout:fragment="css">
-    <style>
-        .row {
-        margin-top: 30px;
-        }
-
-        .card {
-        transition: transform 0.3s ease-in-out;
-        height: 100%;
-        }
-
-        .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .card-img-top {
-        height: 200px;
-        object-fit: cover;
-        }
-
-        .card-body {
-        display: flex;
-        flex-direction: column;
-        }
-
-        h6 {
-        font-weight: bold;
-        margin-bottom: 10px;
-        }
-
-        .price {
-        font-size: 1.1em;
-        color: #007bff;
-        margin-bottom: 10px;
-        }
-
-        .quantity-input {
-        width: 60px;
-        margin-left: 5px;
-        }
-
-        .btn-group {
-        margin-top: auto;
-        }
-
-        .btn-outline-secondary {
-        border-color: #007bff;
-        color: #007bff;
-        }
-
-        .btn-outline-secondary:hover {
-        background-color: #007bff;
-        color: white;
-        }
-
-        .text-body-secondary {
-        font-size: 0.9em;
-        }
-
-        .header-image {
-        max-width: 100%;
-        height: auto;
-        margin-bottom: 20px;
-        }
-
-        .category-title {
-        color: #333;
-        margin-bottom: 30px;
-        }
-    </style>
-</th:block>
 
 <th:block layout:fragment="script">
     <script>
@@ -145,19 +73,18 @@ layout:decorate="~{layouts/layout}">
                         <!--
                         <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
                         -->
-                <!-- <img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}"> -->
+                        <!--<img style="width: 100px; height: 100px;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">-->
                         <span th:data-pro_name="${productVO.pro_name}" th:data-pro_num="${productVO.pro_num}" name="pro_content" th:utext="${productVO.pro_content}"></span>
                         <input type="hidden" name="pro_upfolder" th:value="${productVO.pro_upfolder}">
                         <input type="hidden" name="pro_img" th:value="|s_${productVO.pro_img}|">
                         <div class="card-body" style="position: relative; min-height: 200;">
                             <h6 th:text="${productVO.pro_name}"></h6>
                             <span>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</span>
-                            <div class="mt-1">수량 <input type="number" style="width: 48px;" name="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></div>
+                            <div class="mt-1">
+                                수량 <input type="number" style="width: 48px;" name="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1">
+                            </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
-                                    <div style="padding-right: 10px;">
-                                        <small class="text-body-secondary">상품후기 : [[${productVO.pro_review}]]</small>
-                                    </div>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" name="btn_cart_add" th:data-pro_num="${productVO.pro_num}">장바구니</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" name="btn_buy_add" th:data-pro_num="${productVO.pro_num}">구매</button>
                                 </div>  

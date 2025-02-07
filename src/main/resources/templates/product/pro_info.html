@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{layouts/layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
-    <style>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+	<style>
         /*평점 기본효과*/
         p#star_rev_rate a.rev_rate {
             font-size: 22px;
@@ -15,127 +13,35 @@ layout:decorate="~{layouts/layout}">
         p#star_rev_rate a.rev_rate.on {
             color: red;
         }
-
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .product-details {
-            display: flex;
-            margin-top: 50px;
-        }
-
-        .product-image {
-            width: 50%;
-            padding-right: 20px;
-        }
-
-        .product-image img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .product-info {
-            width: 50%;
-            position: relative;
-            padding-bottom: 50px;
-        }
-
-        .product-info h4 {
-            margin-bottom: 10px;
-        }
-
-        .product-info .price-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .product-info .price-info h4:first-child {
-            margin-right: 10px;
-        }
-
-        #cart_amount {
-            width: 60px;
-            padding: 5px;
-        }
-
-        .btn-group {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-        }
-
-        #tabs {
-            margin-top: 30px;
-        }
-
-        #tabs .ui-tabs-nav {
-            background: #f4f4f4;
-            border: none;
-            border-radius: 0;
-        }
-
-        #tabs .ui-tabs-nav li {
-            margin: 0;
-        }
-
-        #tabs .ui-tabs-nav li a {
-            padding: 10px 15px;
-        }
-
-        #tabs .ui-tabs-panel {
-            padding: 20px;
-            background: #fff;
-            border: 1px solid #ddd;
-        }
-
-        /* Review Section */
-        #rev_content {
-            width: 100%;
-            height: 100px;
-            margin-bottom: 10px;
-        }
-
-        #star_rev_rate {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        #reviewTable {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        #reviewTable td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
     </style>
-
 </th:block>
-<th:block layout:fragment="script">
-<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
-<script id="templateReview" type="text/x-handlebars-template">
-    <table id="reviewTable">
+<th:block layout:fragment="script">
+	<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+	<script id="templateReview" type="text/x-handlebars-template">
+    <table id="reviewTable" class="mt-4" style="width:100%;max-width:1200px;">
         <tbody>
             {{#each .}}
             <tr>
-                <td>{{rev_code}}</td>
-                <td>{{mc_email}}</td>
-                <td>{{rev_content}}</td>
-                <td>{{displayStar rev_rate}}</td>
-                <td>{{convertDate rev_date}}</td>
+                <td style="color: blue;">
+                    {{rev_code}}
+                </td>
+                <td>
+                    {{maskEmail mc_email}}
+                </td>
+                <td>
+                    {{rev_nickname}}
+                </td>
+                <td>
+                    {{rev_content}}
+                </td>
+                <td>
+                    {{displayStar rev_rate}}
+                </td>
+                <td>
+                    {{convertDate rev_date}}
+                </td>
                 <td>
                     {{authControlView mc_email rev_code}}
                 </td>
@@ -151,8 +57,8 @@ layout:decorate="~{layouts/layout}">
         </tbody>
     </table>
 </script>
-<!-- 자바스크립트에서 타임리프 문법을 사용할 때 아래와 같이 작성한다. -->
-<script th:inline="javascript">
+	<!-- 자바스크립트에서 타임리프 문법을 사용할 때 아래와 같이 작성한다. -->
+	<script th:inline="javascript">
     // 핸들바 템플릿에서 사용자정의 함수 : 후기작성시간 포맷(형식) 2025/01/06 11:55:30
     Handlebars.registerHelper("convertDate", function(reviewDate) {
         const date = new Date(reviewDate);
@@ -184,6 +90,25 @@ layout:decorate="~{layouts/layout}">
             return str;
         }
     });
+
+    // 이메일노출로인해
+    Handlebars.registerHelper("maskEmail", function(email) {
+    
+        if (!email) return '';
+
+        const parts = email.split('@');
+
+        if (parts.length !== 2) return email;
+
+        const local = parts[0];
+        const domain = parts[1];
+        
+        // 2번째부터 5번째 문자 마스킹 (인덱스 1~4)
+        const masked = local[0] + '*'.repeat(Math.min(4, local.length-1)) + local.slice(5);
+        return masked + '@' + domain;
+    });
+
+
     Handlebars.registerHelper("displayStar", function(rating){
     let star = "";
         switch(rating) {
@@ -217,13 +142,13 @@ layout:decorate="~{layouts/layout}">
 
 </script>
 
-<script>
+	<script>
     $(function(){
         $("#tabs").tabs();
-    })
+    });
     
 </script>
-<script>
+	<script>
     $(document).ready(function(){
         //id="btn_cart_add"
         $("#btn_cart_add").on("click", function(){
@@ -272,7 +197,7 @@ layout:decorate="~{layouts/layout}">
         //페이징출력함수
         function fn_displayReviewPaging(pageData, target) {
 
-            console.log(pageData);
+            //console.log(pageData);
 
             let pageStr = '<nav aria-label="Page navigation example">';
                 pageStr += '<ul class="pagination">';
@@ -293,26 +218,26 @@ layout:decorate="~{layouts/layout}">
             pageStr += '</ul>';
             pageStr += '</nav>';
 
-            console.log(pageStr);
+            //console.log(pageStr);
 
             target.empty();
             target.append(pageStr);
         }
 
-        // 페이지 번호 클릭설정  1	2	3	4	5 next
-    $("div#reviewPaging").on("click", "li a", function(e) {
-        e.preventDefault(); // a태그의 링크기능을 제거.
-        // $(this) : 선택한 a태그를 참조.
-        reviewPage = $(this).attr("href");  // 페이지번호 읽기.
+            // 페이지 번호 클릭설정  1	2	3	4	5 next
+        $("div#reviewPaging").on("click", "li a", function(e) {
+            e.preventDefault(); // a태그의 링크기능을 제거.
+            // $(this) : 선택한 a태그를 참조.
+            reviewPage = $(this).attr("href");  // 페이지번호 읽기.
 
-        //console.log("선택한 페이지: ", replyPage); // 3
+            //console.log("선택한 페이지: ", replyPage); // 3
 
-        //console.log("url", url); //  /replies/pages/3510/1
+            //console.log("url", url); //  /replies/pages/3510/1
 
-        url = "/review/rev_list/" + pro_num + "/" + reviewPage;
+            url = "/review/rev_list/" + pro_num + "/" + reviewPage;
 
-        getPage(url);
-    });
+            getPage(url);
+        });
 
         //평점 클릭 id="star_rev_rate"
         $("#star_rev_rate a.rev_rate").on("click", function(e){
@@ -376,83 +301,212 @@ layout:decorate="~{layouts/layout}">
             let cur_tr = $(this).parent().parent();
             cur_tr.find("td").remove();
 
-            $.ajax({
-                url : '/review/review_info/' + rev_code,
-                type : 'get',
-                dataType : 'json',
-                success : function(result) {
-                    console.log(result);
-                }
-            });
+        $.ajax({
+            url : '/review/review_info/' + rev_code,
+            type : 'get',
+            dataType : 'json',
+            success : function(result) {
+                console.log(result);
+                //rev_code: 2, mc_email: 'audanseo15@gmail.com', pro_num: 10, rev_title: null, rev_content: '테스트2',
+                let str_rev_code = $(`<td>${result.rev_code}</td>`);
+                let str_mc_email = $(`<td>${result.mc_email}</td>`);
+                let str_rev_content = $(`<td><input type="text" name="rev_content" value="${result.rev_content}"></td>`);
+                let star_rate = result.rev_rate;
+
+                /*
+                <p id="star_rev_rate">
+                    <a class="rev_rate" href="#">★</a>
+                    <a class="rev_rate" href="#">★</a>
+                    <a class="rev_rate" href="#">★</a>
+                    <a class="rev_rate" href="#">★</a>
+                    <a class="rev_rate" href="#">★</a>
+                    평점
+                </p>
+                */
+                let tempStr = '<p id="star_rev_rate">';
+                    for(let i=1; i<=5; i++) {
+                        if(i <= star_rate) {
+                            //<a class="rev_rate on" href="#">★</a>
+                            tempStr += '<a class="rev_rate on" href="#">★</a>';
+                        }else {
+                            tempStr += '<a class="rev_rate" href="#">★</a>';
+                        }
+                    }
+                tempStr += '</p>';
+
+                console.log(tempStr);
+
+                let str_star_rate = $(`<td>${tempStr}</td>`);
+                let str_rev_date = $(`<td>${result.rev_date}</td>`);
+                let str_update_button = $(`<button type="button" name="update" class="btn btn-outline-info btn-sm" data-rev_code="${result.rev_code}">수정</button>`);
+                let str_cancel_button = $(`<button type="button" name="cancel" class="btn btn-outline-info btn-sm" data-rev_code="${result.rev_code}">취소</button>`);
+
+                cur_tr.append(str_rev_code);
+                cur_tr.append(str_mc_email);
+                cur_tr.append(str_rev_content);
+                cur_tr.append(str_star_rate);
+                cur_tr.append(str_rev_date);
+                cur_tr.append(str_update_button);
+                cur_tr.append(str_cancel_button);
+            }
         });
 
+        // 평점 수정하기
+
+        $("div#reviewList").on("click", "p#star_rev_rate a.rev_rate", function(e) {
+        e.preventDefault();
+        // 기존에 적용했던 a태그(별)들의 on 클래스선택자 제거
+        $(this).parent().children().removeClass("on");
+        // 선택한 a태그 자신에 on 클래스선택자 적용하고, 이전 a태그(이전 별들)에게도 on 클래스선택자 적용
+        $(this).addClass("on").prevAll("a").addClass("on");
+        });
+    });
+
+        $("#reviewList").on("click", "button[name='update']", function() {
+            //console.log("수정하기");
+
+            let rev_code = $(this).data("rev_code"); // 상품후기코드
+            
+            let cur_tr = $(this).parent().parent();
+
+            let rev_rate = 0;
+
+            // <a class="rev_rate on">★</a> 태그에 class="rev_rate on" 이 개수가 몇개인지 체크
+            $("#star_rev_rate a.rev_rate").each(function() {
+                if($(this).attr("class") == "rev_rate on") {
+                rev_rate += 1;
+                }
+            })
+
+            // name="rev_content"
+
+            let  rev_content = cur_tr.find("input[name='rev_content']").val();
+            console.log(rev_content);
+
+            // 스프링 작업.
+        $.ajax({
+            url: '/review/review_modify',
+            type: 'put',
+            headers: {
+                "Content-Type" : "application/json", "X-HTTP-Method-Overrid" : "PUT"
+                },
+            data: JSON.stringify({rev_code : rev_code, rev_rate : rev_rate, rev_content : rev_content}),
+            dataType: 'text',
+            success: function(result) {
+                if(result == "success") {
+                    alert("상품후기 수정됨");
+                    
+                    getPage(url);
+                }
+            }
+        });
+        rev_rate = 0;
+            // 상품후기, 페이징정보를 스프링으로 부터 재 호출
+            //getPage(url);
+        });
+
+        // 취소 이벤트. 
+        $("#reviewList").on("click", "button[name='cancel']", function() {
+            getPage(url);
+        });
+
+
+        // 삭제 이벤트
+        $("#reviewList").on("click", "button[name='delete']", function() {
+            if(!confirm("상품후기를 삭제하시겠습니까?")) return;
+
+            let rev_code = $(this).data("rev_code");
+
+            console.log("상품후기코드", rev_code);
+
+        // 스프링 작업.
+        $.ajax({
+            url: '/review/review_delete/' + rev_code,
+            type: 'delete',
+            headers: {
+                "X-HTTP-Method-Overrid" : "DELETE"
+            },
+            dataType: 'text',
+            success: function(result) {
+                if(result == "success") {
+                    alert("상품후기 삭제됨");
+                    
+                    getPage(url);
+                }
+            }
+        });
+            //getPage(url);
+        });  
     });//ready end
 
 </script>
 </th:block>
 <th:block layout:fragment="content">
-    <div class="row row-cols-1 row-cols-sm-2" style="margin-top: 50px;">
-        <div class="col-6">
-            <img style="width: 70%; height: 100%;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
-        </div>
-        <div class="col-6" style="position: relative; padding-bottom: 50px;">
-            <h4 th:text="${productVO.pro_name}"></h4>
-            <div style="display: flex;"><h4>할인율 :</h4><h4 th:text="${productVO.pro_discount}"></h4></div>
-            <div style="display: flex;"><h4>판매가격 :</h4><h4>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</h4> </div>
-            <div style="display: flex;"><h4>수량 : </h4><input type="number" style="width: 48px;" id="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></div>
-            <div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
-                <div style="padding-right: 10px;">
-                <small class="text-body-secondary">상품후기 : <span id="review_count" th:text="${productVO.pro_review}"></span></small>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary"  id="btn_cart_add">장바구니</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn_buy_add" >구매</button>
-            </div>
-        </div>
+	<div class="row row-cols-1 row-cols-sm-2" style="margin-top: 50px;">
+		<div class="col-6">
+			<img style="width: 70%; height: 100%;" th:src="${'/product/image_display?dateFolderName=' + productVO.pro_upfolder + '&fileName=s_' + productVO.pro_img}">
+		</div>
+		<div class="col-6" style="position: relative; padding-bottom: 50px;">
+			<h4 th:text="${productVO.pro_name}"></h4>
+			<div style="display: flex;">
+				<h4>할인율 :</h4>
+				<h4 th:text="${productVO.pro_discount}"></h4>
+			</div>
+			<div style="display: flex;">
+				<h4>판매가격 :</h4>
+				<h4>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</h4>
+			</div>
+			<div style="display: flex;">
+				<h4>수량 : <input type="number" style="width: 48px;" id="cart_amount" th:max="${productVO.pro_amount}" min="1" value="1"></h4>
+			</div>
+			<div class="btn-group mt-2" style="position: absolute; bottom: 10px; right: 10px;">
+				<div style="padding-right: 10px;">
+					<small class="text-body-secondary">상품후기 : <span id="review_count" th:text="${productVO.pro_review}"></span></small>
+				</div>
+				<button type="button" class="btn btn-sm btn-outline-secondary" id="btn_cart_add">장바구니</button>
+				<button type="button" class="btn btn-sm btn-outline-secondary" id="btn_buy_add">구매</button>
+			</div>
+		</div>
 
-    </div>
-    <div class="row mt-5">
-        <div id="tabs">
-            <ul>
-                <li><a href="#tabs-1">상세정보</a></li>
-                <li><a href="#tabs-2">리뷰</a></li>
-                <li><a href="#tabs-3">QnA</a></li>
-            </ul>
-            <div id="tabs-1">
-                <p>상세내용</p>
-                <p th:utext="${productVO.pro_content}"></p>
-            </div>
-            <div id="tabs-2">
-                <p>리뷰</p>
-                <div class="row">
-                <div class="col-9">
-                    <label for="rev_content"></label>
-                    <textarea class="form-control" id="rev_content"></textarea>
-                </div>
-                <div class="col-3">
-                        <p id="star_rev_rate">
-                            <a class="rev_rate" href="#">★</a>
-                            <a class="rev_rate" href="#">★</a>
-                            <a class="rev_rate" href="#">★</a>
-                            <a class="rev_rate" href="#">★</a>
-                            <a class="rev_rate" href="#">★</a>
-                            평점
-                        </p>
-                    <button class="btn btn-block btn-outline-info btn-sm" id="btn_rev_save" th:data-pro_num="${productVO.pro_num}">리뷰작성</button>
-                </div>
-                <div class="row">
-                    <div class="col" id="reviewList"></div>
-                </div>
-                <div class="row">
-                    <div class="col" id="reviewPaging"></div>
-                </div>
-            </div>
-            </div>
-            
-            <div id="tabs-3">
-                <p>QnA</p>
-            </div>
-        </div>
-    </div>
+	</div>
+	<div class="row mt-5">
+		<div id="tabs">
+			<ul>
+				<li><a href="#tabs-1">상세정보</a></li>
+				<li><a href="#tabs-2">리뷰</a></li>
+				<li><a href="#tabs-3">QnA</a></li>
+			</ul>
+			<div id="tabs-1">
+				<p>상세내용</p>
+				<p th:utext="${productVO.pro_content}"></p>
+			</div>
+			<div id="tabs-2">
+				<p>리뷰</p>
+				<div class="row">
+					<div class="col-9">
+						<label for="rev_content"></label>
+						<textarea class="form-control" id="rev_content"></textarea>
+					</div>
+					<div class="col-3">
+						<p id="star_rev_rate">
+							<a class="rev_rate" href="#">★</a> <a class="rev_rate" href="#">★</a> <a class="rev_rate" href="#">★</a> <a class="rev_rate" href="#">★</a> <a class="rev_rate" href="#">★</a> 평점
+						</p>
+						<button class="btn btn-block btn-outline-info btn-sm" id="btn_rev_save" th:data-pro_num="${productVO.pro_num}">리뷰작성</button>
+					</div>
+					<div class="row">
+						<div class="col" id="reviewList"></div>
+					</div>
+					<div class="row">
+						<div class="col" id="reviewPaging"></div>
+					</div>
+				</div>
+			</div>
+
+			<div id="tabs-3">
+				<p>QnA</p>
+			</div>
+		</div>
+	</div>
 </th:block>
 
 </html>

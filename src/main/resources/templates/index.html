@@ -1,74 +1,28 @@
 
 <!doctype html>
-<html lang="en" class="h-100" data-bs-theme="auto" 
-xmlns:th="http://www.thymeleaf.org" 
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
-layout:decorate="~{layouts/layout}">
-<th:block layout:fragment="css">
-	<style>
-		.carousel-inner {
-            height: 500px;
-            background-color: #f8f9fa;
-        }
+<html lang="en" class="h-100" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 
-        .carousel-inner img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 5%;
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            padding: 20px;
-        }
-
-        .carousel-indicators {
-            bottom: 20px;
-        }
-
-        .carousel-indicators button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin: 0 5px;
-        }
-
-        #myCarousel {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-	</style>
-
-</th:block>
 
 <th:block layout:fragment="content">
 
 	<link href="/css/carousel.css" rel="stylesheet">
 
-	
+
 	<div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
 		<div class="carousel-indicators">
 			<button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
 			<button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
 			<button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
 		</div>
-		<div class="carousel-inner">
-			<div class="carousel-item active">
-				<img src="/images/massagechair1.JPG" class="d-block w-100 h-100">
+		<div class="carousel-inner" style="height: 500px;">
+			<div class="carousel-item active h-100">
+				<img src="/images/massagechair1.JPG" class="d-block w-100 h-100" style="object-fit: contain;">
 			</div>
 			<div class="carousel-item">
-				<img src="/images/massagechair2.JPG" class="d-block w-100 h-100">
+				<img src="/images/massagechair2.JPG" class="d-block w-100 h-100" style="object-fit: contain;">
 			</div>
 			<div class="carousel-item">
-				<img src="/images/massagechair3.JPG" class="d-block w-100 h-100">
+				<img src="/images/massagechair3.JPG" class="d-block w-100 h-100" style="object-fit: contain;">
 			</div>
 		</div>
 		<button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">

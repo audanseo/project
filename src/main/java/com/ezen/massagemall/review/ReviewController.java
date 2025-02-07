@@ -94,6 +94,7 @@ public class ReviewController {
 	public ResponseEntity<String> review_modify(@RequestBody ReviewVO vo) throws Exception {
 		ResponseEntity<String> entity = null;
 
+		reviewService.review_modify(vo);
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 
 		return entity;

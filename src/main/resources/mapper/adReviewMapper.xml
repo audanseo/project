@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezen.massagemall.admin.review.AdReviewMapper">
+	<select id="review_list" resultType="HashMap">
+		
+		select 
+			r.rev_code,r.mc_email,r.pro_num,r.rev_content,r.rev_rate,r.rev_date,pt.pro_name,pt.pro_upfolder,pt.pro_img 
+		from 
+			review_tbl r 
+		inner join 
+			product_tbl pt 
+		on 
+			r.pro_num = pt.pro_num 
+		where 
+			r.rev_code >0
+		
+		<include refid="search"></include>
+		<include refid="rev_rate"></include>
+		<include refid="rev_content"></include>
+			
+		order by 
+			r.rev_date desc
+		limit
+			#{cri.pageStart},#{cri.perPageNum}
+		
+	</select>
+	<select id="review_count" resultType="int">
+		select
+			count(*)
+		from
+			review_tbl r 
+		inner join 
+			product_tbl pt 
+		on 
+			r.pro_num = pt.pro_num 
+		where 
+			r.rev_code >0
+			
+		<include refid="search"></include>
+		<include refid="rev_rate"></include>
+		<include refid="rev_content"></include>
+	</select>
+
+	<sql id="search">
+		<if test="cri.searchType != null">
+		<if test="cri.searchType == 'n'.toString()">
+			and pt.pro_name like concat('%'#{cri.keyword}, '%')
+		</if>
+		<if test="cri.searchType == 'c'.toString()">
+			and pt.pro_num = #{cri.keyword}
+		</if>
+		<if test="cri.searchType == 'i'.toString()">
+			and r.mc_email = #{cri.keyword}
+		</if>
+		</if>
+	</sql>
+
+	<sql id="rev_rate">
+		<if test="rev_rate">
+			and r.rev_rate = #{rev_rate}
+		</if>
+	</sql>
+	
+	<sql id="rev_content">
+		<if test="rev_content != null and !rev_content.equals('')">
+			and r.rev_content like concat('%', #{rev_content}, '%')
+		</if>
+	</sql>
+
+</mapper>

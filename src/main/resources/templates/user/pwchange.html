@@ -14,23 +14,45 @@
 <th:block layout:fragment="content">
     <div class="d-flex justify-content-center">
         <div style="max-width: 600px;">
-            <form action="/user/pwchange" method="post">
-                <h1 class="mt-3 mb-4 text-center ">비밀번호수정</h1>
-            
-                <div class="col-sm-12 mb-3 text-center">
-                    <label for="cur_password" class="form-label">기존비밀번호</label>
-                    <input type="password" class="form-control" id="cur_password" name="cur_password" placeholder="기존비밀번호">
+            <form action="/user/pwchange" method="post" class="row g-3">
+                <h3 class="mt-3 mb-4 text-center">비밀번호수정</h3>
+                
+                <!-- 기존 비밀번호 필드 -->
+                <div class="col-12">
+                    <div class="row align-items-center">
+                        <label for="cur_password" class="col-md-3 col-form-label">기존비밀번호</label>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" id="cur_password" 
+                                name="cur_password" placeholder="기존비밀번호">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-sm-12 mb-3 text-center">
-                    <label for="new_password" class="form-label">신규비밀번호</label>
-                    <input type="password" class="form-control" id="new_password" name="new_password" placeholder="신규비밀번호">
+    
+                <!-- 신규 비밀번호 필드 -->
+                <div class="col-12">
+                    <div class="row align-items-center">
+                        <label for="new_password" class="col-md-3 col-form-label">신규비밀번호</label>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" id="new_password" 
+                                name="new_password" placeholder="신규비밀번호">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-sm-12 mb-3 text-center">
-                    <label for="confrim_password" class="form-label">비밀번호확인</label>
-                    <input type="password" class="form-control" id="confrim_password" name="confrim_password" placeholder="비밀번호확인">
+    
+                <!-- 비밀번호 확인 필드 -->
+                <div class="col-12">
+                    <div class="row align-items-center">
+                        <label for="confrim_password" class="col-md-3 col-form-label">비밀번호확인</label>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" id="confrim_password" 
+                                name="confrim_password" placeholder="비밀번호확인">
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3 text-center">
-                <button class="btn btn-info" type="submit">수정</button>
+    
+                <!-- 제출 버튼 -->
+                <div class="col-12 text-center">
+                    <button class="btn btn-info" type="submit">수정</button>
                 </div>
             </form>
         </div>

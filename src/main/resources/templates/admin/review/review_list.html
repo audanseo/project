@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{admin/layouts/ad_layout}">
+
+<th:block layout:fragment="content">
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col">
+				<div class="card card-primary">
+					<div class="card-header">
+						<h3 class="card-title">상품리뷰목록</h3>
+					</div>
+					<!-- /.card-header -->
+					<!-- list start -->
+					<div class="card-body">
+						<!-- search form start -->
+						<form id="searchForm" action="/admin/review/review_list" method="get">
+							<div class="row">
+								<div class="col-2">검색어</div>
+								<div class="col-3">
+									<select name="searchType" class="form-control">
+										<option value="" th:selected= "${''} == ${pageMaker.cri.searchType}">전체</option>
+										<option value="n" th:selected= "${'n'} == ${pageMaker.cri.searchType}">상품명</option>
+										<option value="c" th:selected= "${'c'} == ${pageMaker.cri.searchType}">상품코드</option>
+										<option value="i" th:selected= "${'i'} == ${pageMaker.cri.searchType}">작성자ID</option>
+									</select>
+								</div>
+								<div class="col-7">
+									<input type="text" name="keyword" class="form-control" th:value="${pageMaker.cri.keyword}" placeholder="검색어를 입력하세요">
+								</div>
+							</div>
+
+							<div class="row mt-3">
+								<div class="col-2">평점/내용</div>
+								<div class="col-5">
+                                    <select class="form-control" name="rev_rate">
+                                        <option value="">전체평점</option>
+                                        <option value="5" th:selected= "${rev_rate == '5'}">5</option>
+                                        <option value="4" th:selected= "${rev_rate == '4'}">4</option>
+                                        <option value="3" th:selected= "${rev_rate == '3'}">3</option>
+                                        <option value="2" th:selected= "${rev_rate == '2'}">2</option>
+                                        <option value="1" th:selected= "${rev_rate == '1'}">1</option>
+                                    </select>
+								</div>
+								<div class="col-5">
+									<input type="text" name="rev_content" class="form-control" th:value="${rev_content}">
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-2">날짜</div>
+								<div class="col-2">
+									<div class="form-group">
+										<select class="form-control">
+											<option>등록일</option>
+											<option>수정일</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-3">
+									<input type="date" id="start_date"> <input type="date" id="end_date">
+								</div>
+								<div class="col-5">
+									<button type="button" class="btn btn-sm btn-outline-info">오늘</button>
+									<button type="button" class="btn btn-sm btn-outline-info">3일간</button>
+									<button type="button" class="btn btn-sm btn-outline-info">일주일</button>
+									<button type="button" class="btn btn-sm btn-outline-info">1개월</button>
+									<button type="button" class="btn btn-sm btn-outline-info">3개월</button>
+									<button type="button" class="btn btn-sm btn-outline-info">전체</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col text-center">
+									<button type="submit" class="btn btn-primary">검색</button>
+									<button type="button" class="btn btn-outline-primary">초기화</button>
+								</div>
+							</div>
+						</form>
+						<div class="row mt-4">
+							<div class="col">
+								<button type="button" class="btn btn-outline-danger" id="btn_sel_delete_1">선택삭제1(ajax)</button>
+								<button type="button" class="btn btn-outline-danger" id="btn_sel_delete_2">선택삭제2(form)</button>
+
+							</div>
+						</div>
+						<div class="row mt-2">
+							<div class="col">
+								<form name="frm_pro_list" id="frm_pro_list" method="post" action="/admin/product/pro_sel_delete_2">
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th style="width: 5%"><input type="checkbox" id="checkAll"></th>
+												<th style="width: 5%;">상품코드</th>
+												<th style="width: 40%;">상품정보</th>
+												<th style="width: 10%">판매가</th>
+												<th style="width: 10%">재고량</th>
+												<th style="width: 10%">등록일</th>
+												<th style="width: 10%">관리</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="productVO:${pro_list}">
+												<td><input type="checkbox" name="check" th:value="${productVO.pro_num}"> <input type="hidden" name="pro_up_folder" th:value="${productVO.pro_up_folder}"> <input type="hidden" name="pro_img" th:value="|s_${productVO.pro_img}|"></td>
+												<td>[[${productVO.pro_num}]]</td>
+												<td>[[${productVO.pro_name}]]<br> <img style="width: 100px; height: 100px;" th:src="${'/admin/product/image_display?dateFolderName=' + productVO.pro_up_folder + '&fileName=s_' + productVO.pro_img}">
+												</td>
+												<td>[[${#numbers.formatInteger(productVO.pro_price, 3, 'COMMA') + '원'}]]</td>
+												<td>[[${productVO.pro_discount}]]</td>
+												<td>[[${#dates.format(productVO.pro_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
+												<td>
+													<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-pro_num="${productVO.pro_num}" name="btn_pro_edit">EDIT</button>
+													<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-pro_num="${productVO.pro_num}" name="btn_pro_del">DELETE</button>
+												</td>
+											</tr>
+
+										</tbody>
+									</table>
+								</form>
+								<!-- 페이징및검색 파라미터 정보 : 현재 목록상태를 작업(수정,삭제)을 하고 돌아왔을 때 유지. -->
+								<form id="criteriaForm" action="" method="get">
+									<!-- 4개은 페이징,검색파라미터 -->
+									<input type="hidden" name="page" id="page" th:value="${pageMaker.cri.page}" /> <input type="hidden" name="perPageNum" id="perPageNum" th:value="${pageMaker.cri.perPageNum}" /> <input type="hidden" name="searchType" id="searchType" th:value="${pageMaker.cri.searchType}" /> <input type="hidden" name="keyword" id="keyword" th:value="${pageMaker.cri.keyword}" />
+
+									<!-- 이미지 파일 삭제를 위한 정보 -->
+									<input type="hidden" name="pro_up_folder" id="pro_up_folder"> <input type="hidden" name="pro_img" id="pro_img">
+
+									<!-- 수정상품코드 -->
+									<input type="hidden" name="pro_num" id="pro_num">
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="card-footer clearfix">
+						<nav aria-label="Page navigation example">
+							<ul class="pagination">
+								<!-- 이전표시여부 Previous  pageMaker.getPrev() -->
+								<th:block th:if="${pageMaker.prev}">
+									<li class="page-item"><a class="page-link" th:href="|/admin/product/pro_list${pageMaker.makeSearch(pageMaker.startPage - 1)}|">Previous</a></li>
+								</th:block>
+								<!--  페이지번호 출력.  1  2  3  4  5 -->
+								<th:block th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+									<li class="page-item" th:classappend="${pageMaker.cri.page == num ? 'active' : ''}"><a class="page-link" th:href="|/admin/product/pro_list${pageMaker.makeSearch(num)}|" th:text="${num}"></a></li>
+								</th:block>
+
+								<!--  다음표시여부 Next -->
+								<th:block th:if="${pageMaker.next}">
+									<li class="page-item"><a class="page-link" th:href="|/admin/product/pro_list${pageMaker.makeSearch(pageMaker.endPage + 1)}|">Next</a></li>
+								</th:block>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</th:block>
+</html>
