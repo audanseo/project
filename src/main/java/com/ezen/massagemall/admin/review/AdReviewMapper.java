@@ -1,17 +1,21 @@
 package com.ezen.massagemall.admin.review;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
 import com.ezen.massagemall.admin.utils.SearchCriteria;
+import com.ezen.massagemall.review.ReviewReply;
+import com.ezen.massagemall.review.ReviewVO;
 
 public interface AdReviewMapper {
 
-	List<Map<String, Object>> review_list(@Param("cri") SearchCriteria cri, @Param("rev_rate") String rev_rate,
+	List<ReviewVO> review_list(@Param("cri") SearchCriteria cri, @Param("rev_rate") String rev_rate,
 			@Param("rev_content") String rev_content);
 
 	int review_count(@Param("cri") SearchCriteria cri, @Param("rev_rate") String rev_rate,
 			@Param("rev_content") String rev_content);
+
+	ReviewReply reply_info(Integer reply_id);
+
 }

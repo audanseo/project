@@ -19,4 +19,6 @@ public interface ReviewMapper {
 	void review_modify(ReviewVO vo);
 
 	void review_delete(Integer rev_code);
+
+	void reply_insert(ReviewReply vo);
 }

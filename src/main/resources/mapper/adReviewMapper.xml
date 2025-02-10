@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ezen.massagemall.admin.review.AdReviewMapper">
-	<select id="review_list" resultType="HashMap">
+	<select id="review_list" resultMap="ReviewWithProductAndRepliesMap">
 		
 		select 
-			r.rev_code,r.mc_email,r.pro_num,r.rev_content,r.rev_rate,r.rev_date,pt.pro_name,pt.pro_upfolder,pt.pro_img 
+			r.rev_code,r.mc_email, r.pro_num,r.rev_content,r.rev_rate,r.rev_date,
+			pt.pro_name,pt.pro_upfolder,pt.pro_img,
+			 rt.reply_id, rt.manager_id, rt.reply_text, rt.reply_date
 		from 
 			review_tbl r 
-		inner join 
+		left join 
 			product_tbl pt 
 		on 
-			r.pro_num = pt.pro_num 
+			r.pro_num = pt.pro_num
+		left join
+			review_replies_tbl rt
+		on
+			r.rev_code = rt.rev_code 
 		where 
 			r.rev_code >0
 		
@@ -24,15 +30,38 @@
 			#{cri.pageStart},#{cri.perPageNum}
 		
 	</select>
+	
+	<resultMap type="com.ezen.massagemall.review.ReviewVO" id="ReviewWithProductAndRepliesMap">
+		<!-- Review 기본정보 -->
+		<id property="rev_code" column="rev_code"/>
+		<result property="mc_email" column="mc_email"/>
+		<result property="pro_num" column="pro_num"/>
+		<result property="rev_content" column="rev_content"/>
+		<result property="rev_rate" column="rev_rate"/>
+		<result property="rev_date" column="rev_date"/>
+		
+		<!-- product -->
+	<association property="product" javaType="com.ezen.massagemall.admin.product.ProductVO">
+		<result property="pro_name" column="pro_name"/>
+		<result property="pro_upfolder" column="pro_upfolder"/>
+		<result property="pro_img" column="pro_img"/>
+	</association>
+	
+		<!-- replies -->
+	<collection property="replies" ofType="com.ezen.massagemall.review.ReviewReply">
+		<id property="reply_id" column="reply_id"/>
+		<result property="manager_id" column="manager_id"/>
+		<result property="reply_text" column="reply_text"/>
+		<result property="reply_date" column="reply_date"/>
+	</collection>
+	</resultMap>
+	
+	
 	<select id="review_count" resultType="int">
 		select
 			count(*)
 		from
 			review_tbl r 
-		inner join 
-			product_tbl pt 
-		on 
-			r.pro_num = pt.pro_num 
 		where 
 			r.rev_code >0
 			
@@ -56,7 +85,7 @@
 	</sql>
 
 	<sql id="rev_rate">
-		<if test="rev_rate">
+		<if test="rev_rate != null and !rev_rate.equals('')">
 			and r.rev_rate = #{rev_rate}
 		</if>
 	</sql>
@@ -66,5 +95,15 @@
 			and r.rev_content like concat('%', #{rev_content}, '%')
 		</if>
 	</sql>
+
+	<select id="reply_info" resultType="com.ezen.massagemall.review.ReviewReply">
+		select 
+			reply_id, rev_code, manager_id, reply_text, reply_date 
+		from 
+			review_replies_tbl
+		where
+			reply_id = #{reply_id}
+	
+	</select>
 
 </mapper>
