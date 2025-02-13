@@ -86,9 +86,8 @@
 	
 	<insert id="reply_insert">
 		insert into
-			review_replies(rev_code, manager_id, reply_text)
+			review_replies_tbl(rev_code, manager_id, reply_text)
 		values(#{rev_code},#{manager_id},#{reply_text})
 	</insert>
-
 
 </mapper>

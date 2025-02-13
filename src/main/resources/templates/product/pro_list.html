@@ -4,7 +4,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 layout:decorate="~{layouts/layout}">
 
 <th:block layout:fragment="script">
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function(){
             //<span name="pro_content" th:utext="${productVO.pro_content}"></span> 클릭
             $("span[name='pro_content']").on("click", function(){
@@ -34,24 +34,30 @@ layout:decorate="~{layouts/layout}">
                     success: function(result){
                         if(result == "success") {
                             alert("장바구니에 등록되었습니다.");
-                            if(confirm("장바구니 페이지로 이동합니다."));
+                            if(confirm("장바구니 페이지로 이동합니다.")) {
                             location.href = "/cart/cart_list";
-                        }   
-                            
+                        }       
                     }
+                    },beforeSend : function(xhr) {
+                        xhr.setRequestHeader("AJAX", "true");
+                    },
+                    error: function(xhr, status, error) {  // 스프링에서 응답된 정보중에 에러코드가 존재하면
+                        console.log(xhr);
+                        alert("인증되지 않은 상태입니다. 로그인 페이지로 이동됩니다.");
+                        location.href = "/user/login";
+                    }                     
                 })
             
             });
             //name="btn_buy_add"
-            $("button[name='btn_buy_add']").on("click", function(){
-                let pro_num = $(this).data("pro_num");
-                let cart_amount = $(this).parents("div.card-body").find("input[name='cart_amount']").val();
-                let url = `/order/order_info?pro_num=${pro_num}&cart_amount=${cart_amount}&type=buy`;
+            //$("button[name='btn_buy_add']").on("click", function(){
+                //let pro_num = $(this).data("pro_num");
+                //let cart_amount = $(this).parents("div.card-body").find("input[name='cart_amount']").val();
+                //let url = `/order/order_info?pro_num=${pro_num}&cart_amount=${cart_amount}&type=buy`;
             
                 //console.log("url", url);
-                location.href = url;
-            });
-
+                //location.href = url;
+            //});
         }); //ready end
     </script>
 
@@ -92,6 +98,18 @@ layout:decorate="~{layouts/layout}">
                         </div>
                     </div>
                 </div>
-            </div>     
+            </div>
+            <script th:inline="javascript">
+                document.querySelector("button[name='btn_buy_add']").addEventListener("click", function() {
+                let pro_num = this.getAttribute("data-pro_num");
+
+                let cart_amount =  this.closest("div.card-body").querySelector("input[name='cart_amount']").value;
+                console.log(cart_amount);
+                let url = `/order/order_info?pro_num=${pro_num}&cart_amount=${cart_amount}&type=buy`;
+
+                // 페이지 이동
+                location.href = url;
+            });
+            </script>     
 </th:block>
 </html>

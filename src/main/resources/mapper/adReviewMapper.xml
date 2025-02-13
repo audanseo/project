@@ -65,7 +65,7 @@
 		where 
 			r.rev_code >0
 			
-		<include refid="search"></include>
+		
 		<include refid="rev_rate"></include>
 		<include refid="rev_content"></include>
 	</select>
@@ -73,7 +73,7 @@
 	<sql id="search">
 		<if test="cri.searchType != null">
 		<if test="cri.searchType == 'n'.toString()">
-			and pt.pro_name like concat('%'#{cri.keyword}, '%')
+			and pt.pro_name like concat('%', #{cri.keyword}, '%')
 		</if>
 		<if test="cri.searchType == 'c'.toString()">
 			and pt.pro_num = #{cri.keyword}
@@ -105,5 +105,23 @@
 			reply_id = #{reply_id}
 	
 	</select>
+	
+	<update id="reply_modify">
+		update
+			review_replies_tbl
+		set
+			reply_text = #{reply_text}, reply_date = now()
+		where
+			reply_id = #{reply_id}
+	</update>
+	
+	
+	<delete id="reply_delete">
+		delete from
+			review_replies_tbl
+		where
+			reply_id = #{reply_id}
+	</delete>
+
 
 </mapper>

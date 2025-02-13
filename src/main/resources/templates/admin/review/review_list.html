@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{admin/layouts/ad_layout}">
-
-<th:block layout:fragment="content">
+	
+	<th:block layout:fragment="script">
+		
+	</th:block>
+	<th:block layout:fragment="content">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<div class="container mt-5">
 		<div class="row">
 			<div class="col">
@@ -49,7 +53,7 @@
 							<div class="row mt-3">
 								<div class="col text-center">
 									<button type="submit" class="btn btn-primary">검색</button>
-									<button type="button" class="btn btn-outline-primary">초기화</button>
+									<button type="button" class="btn btn-outline-primary" id="btn_search_init">초기화</button>
 								</div>
 							</div>
 						</form>
@@ -72,8 +76,8 @@
 											<tr th:each="reviewVO : ${review_list}">
 												<td>[[${reviewVO.rev_code}]]</td>
 												<td>
-													<div class="alert alert-success" role="alert" th:if="${#lists.size(reviewVO.replies) > 0}">답변완료</div>
-													<div class="alert alert-danger" role="alert" th:unless="${#lists.size(reviewVO.replies) > 0}">답변대기</div>
+													<div class="alert alert-success" role="alert" th:if="${#lists.size(reviewVO.replies) > 0}">완료</div>
+													<div class="alert alert-danger" role="alert" th:unless="${#lists.size(reviewVO.replies) > 0}">대기</div>
 												</td>
 												<td>
 													<img style="width: 100px; height: 100px;" th:src="${'/admin/review/image_display?dateFolderName=' + reviewVO.product.pro_upfolder + '&fileName=s_' + reviewVO.product.pro_img}">
@@ -86,7 +90,7 @@
 													<div th:each= "reply : ${reviewVO.replies}">
 														<div class="row">
 															<div class="col">관리자</div>
-															<div class="col"><span th:text="${#temporals.format(reply.reply_date, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
+															<div class="col"><span th:text="${#dates.format(reply.reply_date, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
 														</div>
 												
 													<div class="row">
@@ -100,17 +104,16 @@
 												</td>
 
 												<td>[[${reviewVO.mc_email}]]</td>
-												<td>[[${#temporals.format(reviewVO.rev_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
+												<td>[[${#dates.format(reviewVO.rev_date, 'yyyy-MM-dd HH:mm:ss')}]]</td>
 												<td>
-													<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-rev_code="${reviewVO.rev_code}">수정</button>
-													<button type="button" class="btn btn-block btn-sm btn-outline-primary" th:data-rev_code="${reviewVO.rev_code}">삭제</button>
+													<button type="button" name="openModalBtn" data-bs-toggle="modal" data-bs-target="#review_reply_modal" class="btn btn-block btn-sm btn-outline-primary" th:data-rev_code="${reviewVO.rev_code}">답변하기</button>
 												</td>
 											</tr>
 										</tbody>
 									</table>
 								</form>
 								<!-- 페이징및검색 파라미터 정보 : 현재 목록상태를 작업(수정,삭제)을 하고 돌아왔을 때 유지. -->
-								<form id="criteriaForm" action="/admain/review/review_list" method="get">
+								<form id="criteriaForm" action="/admin/review/review_list" method="get">
 									<input type="hidden" name="page" id="page" th:value="${pageMaker.cri.page}" /> 
 									<input type="hidden" name="perPageNum" id="perPageNum" th:value="${pageMaker.cri.perPageNum}" /> 
 									<input type="hidden" name="searchType" id="searchType" th:value="${pageMaker.cri.searchType}" />
@@ -147,22 +150,217 @@
 	</div>
 
 	<!--Modal 써보기-->
-	<div class="modal" tabindex="-1">
+	<div class="modal fade" id="review_reply_modal" tabindex="-1" aria-labelledby="review_reply_modal" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Modal title</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+					<div
+						style="width: 35px; height: 35px; display:flex; justify-content: center; align-items: center; cursor: pointer;"
+						data-bs-dismiss="modal"
+					>
+						<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" tabindex="1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+					</div>
+					<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+					
 				</div>
-					<div class="modal-body">
-					<p>Modal body text goes here.</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
-				</div>
+			<div class="modal-body">
+				<!-- modal content -->
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+				<button type="button" id="btn_reply_save" class="btn btn-primary">답변저장</button>
+				<button type="button" id="btn_reply_modify" class="btn btn-secondary">답변수정</button>
 			</div>
 		</div>
+		</div>
 	</div>
+</th:block>
+
+<th:block layout:fragment="script2">
+	<script>
+		function displayStars() {
+			const spans = document.querySelectorAll(".star");
+
+			const totalStars = 5;
+
+			spans.forEach(span => {
+				const number = parseInt(span.textContent, 10);
+				if (!isNaN(number) && number >0 && number <= totalStars) {
+					span.textContent = "★".repeat(number) + "☆".repeat(totalStars - number);
+				}else {
+					span.textContent = "Invalid number";
+				}
+			});
+		}
+		displayStars();
+		// id="btn_search_init"
+		const resetButton = document.getElementById('btn_search_init');
+		resetButton.addEventListener('click', () => {
+			const form = resetButton.closest('form');
+			
+			form.reset();
+
+			const selects = form.querySelectorAll('select');
+			selects.forEach(select => {
+				select.value = '';
+			});
+
+			const inputs = form.querySelectorAll('input[type="text"]');
+			inputs.forEach(input => {
+				input.value = '';
+			});
+		});
+	</script>
+	<script>
+		//모달 보여주기
+		document.addEventListener("DOMContentLoaded", () => {
+			const criteriaForm = document.getElementById("criteriaForm");
+
+			document.querySelectorAll("a.movepage").forEach(function(anchor){
+				anchor.addEventListener("click", function(event){
+					event.preventDefault();
+					
+					const pageInput = criteriaForm.querySelector("input[name='page']");
+					if(pageInput) {
+						pageInput.value = anchor.getAttribute("href");
+					}
+
+					criteriaForm.submit();
+				});
+			});
+		//id=review_reply_modal
+		const modalElement = document.querySelector("#review_reply_modal");
+
+		const modalInstance = new bootstrap.Modal(modalElement);
+		
+		// id=exampleModalLabel, class=modal-body
+		const modalTitle = document.querySelector("#exampleModalLabel");
+		const modalBody = document.querySelector(".modal-body");
+
+		const btnReplySave = document.querySelector("#btn_reply_save");
+		const btnReplyModify = document.querySelector("#btn_reply_modify");
+
+		const fetchAPI = (url, options = {}, ResponseType = 'json') =>
+			fetch(url, options).then(response =>{
+				if(!response.ok) throw new Error("네트워크 응답오류");
+				return ResponseType === 'json' ? response.json() : response.text();
+		});
+
+		document.querySelectorAll("button[name='openModalBtn']").forEach(button => {
+			button.addEventListener("click", () => {
+				const revCode = button.getAttribute("data-rev_code");
+
+				fetchAPI(`/admin/review/review_info/${revCode}`)
+					.then(data => {
+						
+						modalTitle.textContent = `상품코드 : ${revCode}`;
+						modalBody.innerHTML = `
+							<p><strong>상품후기내용 :</strong> ${data.rev_content}</p>
+							<p><strong>평점 :</strong> ${data.rev_rate}</p>
+							<p><strong>작성일 :</strong> ${data.rev_date}</p>
+							<label>상품후기 답변 :</label>
+							<input type="text" name="reply_content" id="reply_content">
+						`;
+						console.log(modalBody);
+
+						toggleButtons(true);
+					
+						btnReplySave.onclick = () => handleReplySave(revCode);
+						modalInstance.show();
+					})
+				.catch(error => alert(`Failed to load review details: ${error.message}`));
+			});
+		});
+		
+		//답변 저장
+		const handleReplySave = (revCode) => {
+            const replyContent = document.querySelector("#reply_content").value.trim();
+			
+			if (!replyContent) return alert("상품후기 답변내용을 입력하세요");
+
+			fetchAPI(`/admin/review/reply_insert`, {
+				method: "POST",
+				headers: { "Content-Type" : "application/json"},
+				body: JSON.stringify({ reply_text : replyContent , rev_code: revCode })
+			}, 'text')
+				.then(data => {
+                    if (data === "success") {
+						alert("상품후기 답변저장 성공");
+						modalInstance.hide();
+
+						criteriaForm.submit();
+					}
+                })
+				.catch(error => alert(`상품후기 답변저장시 에러발생: ${error.message}`));
+		};
+		//답변 수정
+		document.body.addEventListener('click', event => {
+			const target = event.target;
+			const reply_id = target.getAttribute('data-reply_id');
+			
+			if(target.name === 'btn_reply_edit') handleReplyEdit(reply_id);
+			if(target.name === 'btn_reply_delete') handleReplyDelete(reply_id);
+		});
+
+		const handleReplyEdit = (reply_id) => {
+			fetchAPI(`/admin/review/reply_info/${reply_id}`)
+				.then(data => {				
+					modalTitle.textContent = `상품후기 답변 : ${reply_id}`;
+					modalBody.innerHTML = `
+                        <label>상품후기 답변 : </label>
+						<input type="text" name="reply_content" id="reply_content2" value="${data.reply_text}">
+					`;
+
+					toggleButtons(false);
+					btnReplyModify.onclick = () => handleReplyModify(reply_id);
+
+					modalInstance.show();
+				});
+		};
+		//답변 수정 저장
+		const handleReplyModify = (replyId) => {
+			const replyContent = document.querySelector("#reply_content2").value.trim();
+            
+            if(!replyContent) return alert("상품후기 답변 수정내용을 입력하세요");
+
+			fetchAPI(`/admin/review/reply_modify` , {
+				method: "POST",
+                headers: { "Content-Type" : "application/json"},
+                body: JSON.stringify({ reply_id: replyId, reply_text : replyContent })
+			}, 'text')
+				.then(data => {
+					if(data === "success") {
+						alert("상품후기 답변수정 성공");
+						modalInstance.hide();
+						criteriaForm.submit();
+					}
+				})
+                .catch(error => alert(`상품후기 답변 수정시 에러발생 : ${error.message}`));
+		}
+
+		//삭제처리
+		const handleReplyDelete = (replyId) => {
+			if(!confirm(`답변을 삭제하시겠습니까? reply_id=${replyId}`)) return;
+
+			fetchAPI(`/admin/review/reply_delete/${replyId}`, {method: 'DELETE'}, 'text')
+			.then(data => {
+				if(data === "success") {
+					alert("답변삭제 성공");
+					criteriaForm.submit();
+				}
+			})
+			.catch(error => alert(`답변 삭제시 에러발생 : ${error.message}`));
+		}
+
+		//버튼 표시
+		const toggleButtons = (isSaveVisible) => {
+			btnReplySave.style.display = isSaveVisible ? 'inlin-block' : 'none';
+
+			btnReplyModify.style.display = isSaveVisible ? 'none' : 'inline-block'
+		}
+
+	});
+	</script>
 </th:block>
 </html>

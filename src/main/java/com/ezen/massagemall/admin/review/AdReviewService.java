@@ -27,4 +27,12 @@ public class AdReviewService {
 	public ReviewReply reply_info(Integer reply_id) {
 		return adReviewMapper.reply_info(reply_id);
 	}
+
+	public void reply_modify(Integer reply_id, String reply_text) {
+		adReviewMapper.reply_modify(reply_id, reply_text);
+	}
+
+	public void reply_delete(Integer reply_id) {
+		adReviewMapper.reply_delete(reply_id);
+	}
 }

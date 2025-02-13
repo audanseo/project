@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,13 +66,20 @@ public class AdReviewController {
 	public ResponseEntity<ReviewVO> review_info(@PathVariable("rev_code") Integer rev_code) throws Exception {
 		ResponseEntity<ReviewVO> entity = null;
 
-		entity = new ResponseEntity<ReviewVO>(reviewService.review_info(rev_code), HttpStatus.OK);
+		ReviewVO review_info = reviewService.review_info(rev_code);
+
+		log.info("" + review_info);
+
+		entity = new ResponseEntity<ReviewVO>(review_info, HttpStatus.OK);
 		return entity;
 	}
 
+	// 답변내용 저장
 	@PostMapping(value = "/reply_insert", consumes = "application/json", produces = { MediaType.TEXT_PLAIN_VALUE })
 	public ResponseEntity<String> reply_insert(@RequestBody ReviewReply vo, HttpSession session) throws Exception {
 		ResponseEntity<String> entity = null;
+
+		log.info("상품후기답변" + vo);
 		AdminDto adminDto = ((AdminDto) session.getAttribute("admin_auth"));
 		vo.setManager_id(adminDto.getAd_userid());
 
@@ -87,6 +95,27 @@ public class AdReviewController {
 		ResponseEntity<ReviewReply> entity = null;
 
 		entity = new ResponseEntity<ReviewReply>(adReviewService.reply_info(reply_id), HttpStatus.OK);
+		return entity;
+	}
+
+	// 답변 수정
+	@PostMapping(value = "/reply_modify", consumes = "application/json", produces = { MediaType.TEXT_PLAIN_VALUE })
+	public ResponseEntity<String> reply_modify(@RequestBody ReviewReply vo) throws Exception {
+		ResponseEntity<String> entity = null;
+
+		adReviewService.reply_modify(vo.getReply_id(), vo.getReply_text());
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+		return entity;
+	}
+
+	// 답변삭제
+	@DeleteMapping("/reply_delete/{reply_id}")
+	public ResponseEntity<String> reply_delete(@PathVariable("reply_id") Integer reply_id) throws Exception {
+
+		ResponseEntity<String> entity = null;
+
+		adReviewService.reply_delete(reply_id);
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		return entity;
 	}
 

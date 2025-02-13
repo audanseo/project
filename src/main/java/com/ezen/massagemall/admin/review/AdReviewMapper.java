@@ -18,4 +18,7 @@ public interface AdReviewMapper {
 
 	ReviewReply reply_info(Integer reply_id);
 
+	void reply_modify(@Param("reply_id") Integer reply_id, @Param("reply_text") String reply_text);
+
+	void reply_delete(Integer reply_id);
 }
